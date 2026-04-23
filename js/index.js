@@ -103,7 +103,7 @@ function initHeroScene() {
       Правая: завершается на 1.0× → ≈ 1.0× скорости → правая быстрее левой
       (обе при этом медленнее чем было, правая всё равно опережает)
     */
-    const leftSpeedFactor = window.innerWidth <= 1100 ? 0.9 : 1.5;
+    const leftSpeedFactor = window.innerWidth <= 1100 ? 0.7 : 1.5;
 
     const stCfgLeft = {
         trigger: stage,

@@ -3742,6 +3742,7 @@
         font-size: 14px;
         line-height: 140%;
         color: var(--color-main-white);
+        max-width: none;
     }
 
     .main-title {
