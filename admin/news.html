@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости — админка</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+<aside class="admin-sidebar">
+    <h2>Decard Admin</h2>
+    <nav>
+        <a href="/admin/index.html">Главная</a>
+        <a href="/admin/news.html" class="active">Новости / статьи</a>
+        <a href="/admin/projects.html">Проекты / портфолио</a>
+        <a href="/admin/logout">Выйти</a>
+    </nav>
+</aside>
+
+<main class="admin-main">
+    <div class="admin-topbar">
+        <h1>Новости и статьи</h1>
+        <a class="admin-button" href="/admin/editor.html">+ Добавить статью</a>
+    </div>
+
+    <div id="news-list" class="admin-list"></div>
+</main>
+
+<script>
+    async function loadNews() {
+        const res = await fetch('/admin/api/news');
+        if (res.status === 401) { location.href = '/admin/login.html'; return; }
+        const news = await res.json();
+
+        const container = document.getElementById('news-list');
+
+        if (!news.length) {
+            container.innerHTML = '<p class="admin-empty">Статей пока нет. Нажмите «Добавить статью», чтобы создать первую.</p>';
+            return;
+        }
+
+        container.innerHTML = news.map(item => `
+            <div class="admin-card">
+                <div class="admin-card-thumb">
+                    ${item.cover_image
+                        ? `<img src="${item.cover_image}" alt="">`
+                        : `<div class="admin-card-thumb__empty">Без обложки</div>`}
+                </div>
+                <div class="admin-card-body">
+                    <div class="admin-card-meta">
+                        <span class="admin-tag">${escapeHtml(item.category || 'Статьи')}</span>
+                        <span class="admin-status admin-status--${item.status}">${item.status === 'published' ? 'Опубликовано' : 'Черновик'}</span>
+                        <span>${item.published_at || '—'}</span>
+                        <span>⏱ ${escapeHtml(item.reading_time || '')}</span>
+                    </div>
+                    <h3>${escapeHtml(item.title)}</h3>
+                    <p class="admin-muted">slug: <code>${escapeHtml(item.slug)}</code></p>
+                    ${item.preview ? `<p class="admin-preview">${escapeHtml(item.preview)}</p>` : ''}
+                </div>
+                <div class="admin-card-actions">
+                    <a class="admin-button ghost" href="/admin/editor.html?id=${item.id}">Редактировать</a>
+                    ${item.status === 'published'
+                        ? `<a class="admin-button ghost" target="_blank" href="/pages/article.html?slug=${encodeURIComponent(item.slug)}">Открыть</a>`
+                        : ''}
+                    <button class="admin-button danger" onclick="deleteNews(${item.id})">Удалить</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"']/g, s => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[s]));
+    }
+
+    async function deleteNews(id) {
+        if (!confirm('Удалить статью? Действие необратимо.')) return;
+        await fetch('/admin/api/news/' + id, { method: 'DELETE' });
+        loadNews();
+    }
+
+    loadNews();
+</script>
+</body>
+</html>

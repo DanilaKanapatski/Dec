@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="shortcut icon" href="favicon.svg">
+    <title>Decard</title>
+</head>
+<body>
+<div class="page-scale">
+    <div class="page-wrapper">
+        <div class="modal" id="contact-modal" aria-hidden="true">
+            <div class="modal__overlay" data-modal-close tabindex="-1"></div>
+
+            <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+                <button class="modal__close" type="button" aria-label="Закрыть" data-modal-close>
+                    <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M33.7492 0.750013L0.75084 33.7483M0.750841 0.750012L33.7492 33.7483" stroke="white"
+                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <div class="modal__content">
+                    <div class="modal-wrapper">
+                        <div class="modal__kicker">готовы обсудить задачу?</div>
+                        <h2 class="modal__title" id="contact-modal-title">
+                            Оставьте заявку —<br/>
+                            мы подберём решение<br/>
+                            и предложим оптимальную стоимость.
+                        </h2></div>
+
+                    <form class="modal__form" id="modal-form">
+                        <label class="modal__field">
+                            <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Имя"
+                                    autocomplete="name"
+                                    class="modal__input"
+                            />
+                            <span class="modal__error"></span>
+                        </label>
+
+                        <label class="modal__field">
+                            <input
+                                    type="tel"
+                                    name="phone"
+                                    placeholder="Телефон"
+                                    autocomplete="tel"
+                                    class="modal__input"
+                            />
+                            <span class="modal__error"></span>
+                        </label>
+
+                        <label class="modal__agree">
+                            <input type="checkbox" name="agree" class="modal__agree-input"/>
+                            <span class="modal__agree-text">
+             Я даю согласие на обработку персональных данных, файлов cookie,
+            принимаю условия Соглашения об обработке персональных данных пользователей
+            и разрешаю передачу данных сервису «Яндекс.Метрика».
+        </span>
+                        </label>
+
+                        <button class="modal__submit" type="submit">
+                    <span class="modal__submit__text-wrap">
+                        <span class="modal__submit__text">отправить</span>
+                        <span class="modal__submit__text">отправить</span>
+                    </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <header class="header">
+            <div class="container">
+                <div class="header-desktop">
+                    <div class="header-wrapper">
+                        <a href="index.html">
+                            <picture>
+                                <source media="(max-width:767px)" srcset="assets/images/header-logoMob.svg">
+                                <img src="assets/images/header-logo.svg" alt="Decard">
+                            </picture>
+                        </a>
+
+                        <div class="header-separator"></div>
+
+                        <a href="mailto:info@decardstuido.ru" class="link-slide">
+                            <span>info@decardstuido.ru</span>
+                            <span>info@decardstuido.ru</span>
+                        </a>
+                        <a href="tel:88122408949" class="link-slide">
+                            <span>8 (812) 240 - 89 - 49</span>
+                            <span>8 (812) 240 - 89 - 49</span>
+                        </a>
+                    </div>
+
+                    <nav>
+                        <ul class="header-list">
+                            <li>
+                                <a href="pages/portfolio.html" class="link-slide">
+                                    <span>ПОРТФОЛИО</span>
+                                    <span>ПОРТФОЛИО</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="pages/contacts.html" class="link-slide">
+                                    <span>КОНТАКТЫ</span>
+                                    <span>КОНТАКТЫ</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="pages/blog.html" class="link-slide">
+                                    <span>БЛОГ</span>
+                                    <span>БЛОГ</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+
+                    <button class="header-btn" type="button" data-modal-open="contact">
+                    <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
+                        <span class="header-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
+                    </span>
+                    </button>
+                </div>
+
+                <div class="header-mobile">
+                    <a class="header-mobile__logo" href="index.html">
+                        <picture>
+                            <source media="(max-width:767px)" srcset="assets/images/header-logoMob.svg">
+                            <img src="assets/images/header-logo.svg" alt="Decard">
+                        </picture>
+                    </a>
+
+                    <button class="header-burger" type="button" aria-label="Открыть меню" aria-expanded="false">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <div class="header-mobile__contacts">
+                        <a href="mailto:info@decardstuido.ru" class="link-slide">
+                            <span>info@decardstuido.ru</span>
+                            <span>info@decardstuido.ru</span>
+                        </a>
+                        <a href="tel:88122408949" class="link-slide">
+                            <span>8 (812) 240 - 89 - 49</span>
+                            <span>8 (812) 240 - 89 - 49</span>
+                        </a>
+                    </div>
+                    <button class="header-btn" type="button" data-modal-open="contact">
+                    <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
+                        <span class="header-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
+                    </span>
+                    </button>
+
+                    <button class="header-mobile__call" aria-label="Позвонить" data-modal-open="contact">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 4H9L11 9L8.5 10.5C9.57096 12.6715 11.3285 14.429 13.5 15.5L15 13L20 15V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21C14.0993 20.763 10.4202 19.1065 7.65683 16.3432C4.8935 13.5798 3.23705 9.90074 3 6C3 5.46957 3.21071 4.96086 3.58579 4.58579C3.96086 4.21071 4.46957 4 5 4Z"
+                                  fill="white"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+            <div class="mobile-menu__overlay"></div>
+            <div class="mobile-menu__panel">
+                <div class="mobile-menu__top">
+                    <a class="mobile-menu__logo" href="index.html">
+                        <picture>
+                            <source media="(max-width:767px)" srcset="assets/images/header-logoMob.svg">
+                            <img src="assets/images/header-logo.svg" alt="Decard">
+                        </picture>
+                    </a>
+
+                    <button class="mobile-menu__close" type="button" aria-label="Закрыть меню">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.549 0.750082L0.75004 20.5491M0.750041 0.750081L20.549 20.5491" stroke="white"
+                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <div class="mobile-menu__top-contacts">
+                        <a href="mailto:info@decardstuido.ru" class="link-slide">
+                            <span>info@decardstuido.ru</span>
+                            <span>info@decardstuido.ru</span>
+                        </a>
+                        <a href="tel:88122408949" class="link-slide">
+                            <span>8 (812) 240 - 89 - 49</span>
+                            <span>8 (812) 240 - 89 - 49</span>
+                        </a>
+                    </div>
+                    <button class="mobile-menu__btn" type="button" data-modal-open="contact">
+                        связаться с нами
+                    </button>
+
+                    <button class="mobile-menu__call" aria-label="Позвонить" data-modal-open="contact">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 4H9L11 9L8.5 10.5C9.57096 12.6715 11.3285 14.429 13.5 15.5L15 13L20 15V19C20 19.5304 19.7893 20.0391 19.4142 20.4142C19.0391 20.7893 18.5304 21 18 21C14.0993 20.763 10.4202 19.1065 7.65683 16.3432C4.8935 13.5798 3.23705 9.90074 3 6C3 5.46957 3.21071 4.96086 3.58579 4.58579C3.96086 4.21071 4.46957 4 5 4Z"
+                                  fill="white"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <nav class="mobile-menu__nav">
+                    <a href="pages/portfolio.html" class="link-slide">
+                        <span>Портфолио</span>
+                        <span>Портфолио</span>
+                    </a>
+                    <a href="pages/contacts.html" class="link-slide">
+                        <span>Контакты</span>
+                        <span>Контакты</span>
+                    </a>
+                    <a href="pages/blog.html" class="link-slide">
+                        <span>Блог</span>
+                        <span>Блог</span>
+                    </a>
+                </nav>
+
+                <div class="mobile-menu__contacts">
+                    <a href="mailto:info@decardstuido.ru" class="link-slide">
+                        <span>info@decardstuido.ru</span>
+                        <span>info@decardstuido.ru</span>
+                    </a>
+                    <a href="tel:88122408949" class="link-slide">
+                        <span>8 (812) 240 - 89 - 49</span>
+                        <span>8 (812) 240 - 89 - 49</span>
+                    </a>
+                </div>
+
+                <ul class="mobile-menu__socials">
+                    <li>
+                        <a href="https://rutube.ru/channel/27016904/" class="link-slide">
+                            <span>RUTUBE</span>
+                            <span>RUTUBE</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.behance.net/decardstudio" class="link-slide">
+                            <span>BEHANCE</span>
+                            <span>BEHANCE</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/channel/UC_WUnhmQpvnXn4dGqW0dFTA" class="link-slide">
+                            <span>YOUTUBE</span>
+                            <span>YOUTUBE</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <main>
+            <section class="main" id="mainHero">
+                <div class="main-stage">
+                    <div class="main-media">
+                        <img src="assets/images/main-1.png" alt="">
+                    </div>
+
+                    <div class="main-layout">
+                        <div class="main-panel main-panel--left" id="heroLeftPanel">
+                            <div class="main-panel__top">
+                                <h1 class="main-title">
+                                    Премиальная<br> 3D-визуализация с высокой скоростью и доступным бюджетом.
+                                </h1>
+
+                                <!-- Описание внутри панели — показывается только на планшете/мобилке -->
+                                <p class="main-desc main-desc--in-panel">
+                                    Студия полного цикла: 30 опытных специалистов в офисе, единые стандарты
+                                    качества и мощные вычислительные ресурсы — для безупречной 3D-визуализации в сжатые
+                                    сроки
+                                </p>
+
+                                <div class="main-tags">
+                                    <span>Рендеры экстерьера</span>
+                                    <span>Рендеры интерьера</span>
+                                    <span>Интерактивный Unreal</span>
+                                    <span>3D видео</span>
+                                    <span>3D туры</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="main-panel main-panel--right" id="heroRightPanel">
+                            <p class="main-desc">
+                                Студия полного цикла: 30 опытных специалистов в офисе, единые стандарты
+                                качества и мощные вычислительные ресурсы — для безупречной 3D-визуализации в сжатые
+                                сроки
+                            </p>
+                        </div>
+                    </div>
+
+                    <button class="main-scroll-arrow" id="mainScrollArrow" type="button" aria-label="Прокрутить вниз">
+                        <svg width="9" height="28" viewBox="0 0 9 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.04036 26.4492L4.04036 0.499943M4.04036 26.4492L7.3737 23.1159M4.04036 26.4492L0.707031 23.1159"
+                                  stroke="white" stroke-linecap="square"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ЦИФРЫ — отдельная секция -->
+            <section class="stats-section" id="statsSection">
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="main-stat main-stat--big" id="heroStatBig">
+                            <span class="main-counter-badge">+ 1 в октябре</span>
+                            <h3>1519</h3>
+                            <p>Сделанных рендеров</p>
+                        </div>
+
+                        <div class="stats-small">
+                            <div class="main-stat" id="heroStatMid">
+                                <span class="main-counter-badge">+ 38 в октябре</span>
+                                <h3>211</h3>
+                                <p>Выполненных проектов</p>
+                            </div>
+
+                            <div class="main-stat" id="heroStatSmall">
+                                <span class="main-counter-badge">+ 4 за октябрь</span>
+                                <h3>57</h3>
+                                <p>Созданных 3D роликов</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="featured-portfolio" id="featuredPortfolio">
+                <div class="featured-portfolio__stage">
+                    <!-- Заголовок — чёрная полоса сверху -->
+                    <div class="featured-portfolio__header">
+                        <div class="container">
+                            <div class="subtitle-wrapper featured-portfolio__subtitle-wrapper">
+                                <h3 class="subtitle">ПОСЛЕДНИЕ ПРОЕКТЫ</h3>
+                                <a href="pages/portfolio.html">Смотреть все</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Медиа-зона: картинка + карточка поверх -->
+                    <div class="featured-portfolio__media">
+                        <div class="featured-portfolio__bg-track">
+                            <div class="fp-bg-slide">
+                                <img src="assets/images/main-2.png" alt="Nexus">
+                            </div>
+                            <div class="fp-bg-slide">
+                                <img src="assets/images/main-3.png" alt="Forma">
+                            </div>
+                            <div class="fp-bg-slide">
+                                <img src="assets/images/main-3.png" alt="Solar">
+                            </div>
+                            <div class="fp-bg-slide">
+                                <img src="assets/images/main-2.png" alt="Riva">
+                            </div>
+                        </div>
+
+                        <div class="featured-portfolio__card">
+                            <div class="featured-project__left">
+                                <div class="fp-card-head">
+                                    <h3 class="fp-card-title">Nexus</h3>
+                                    <span class="fp-card-subtitle">Аквилон</span>
+                                </div>
+
+                                <p class="fp-card-desc">
+                                    Мы подготовили рендеры и ролик интерьера. Проект успешно прошёл презентацию —
+                                    клиент привлёк инвестиции и запустил строительство.
+                                </p>
+                            </div>
+
+                            <div class="fp-card-preview">
+                                <div class="fp-card-preview__viewport">
+                                    <div class="fp-card-preview__track">
+                                        <div class="fp-card-preview__slide">
+                                            <img src="assets/images/main-3.png" alt="Nexus detail">
+                                        </div>
+                                        <div class="fp-card-preview__slide">
+                                            <img src="assets/images/main-3.png" alt="Forma detail">
+                                        </div>
+                                        <div class="fp-card-preview__slide">
+                                            <img src="assets/images/main-3.png" alt="Solar detail">
+                                        </div>
+                                        <div class="fp-card-preview__slide">
+                                            <img src="assets/images/main-3.png" alt="Riva detail">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="featured-project__right">
+                                <span class="fp-card-city">Москва</span>
+                                <span class="fp-card-date">Декабрь 2024 г.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- mobile fallback -->
+                <div class="featured-portfolio__mobile">
+                    <div class="container">
+                        <div class="featured-portfolio__mobile-card">
+                            <div class="featured-portfolio__mobile-top">
+                                <span>ПОСЛЕДНИЕ ПРОЕКТЫ</span>
+                                <a href="pages/portfolio.html">СМОТРЕТЬ ВСЕ</a>
+                            </div>
+
+                            <div class="featured-portfolio__mobile-image">
+                                <img src="assets/images/main-2.png" alt="Nexus">
+                            </div>
+
+                            <div class="featured-portfolio__mobile-inner">
+                                <div class="featured-portfolio__mobile-meta">
+                                    <div>
+                                        <h3>Nexus</h3>
+                                        <span>Аквилон</span>
+                                    </div>
+
+                                    <div class="featured-portfolio__mobile-place">
+                                        <span>Москва</span>
+                                        <span>Декабрь 2024 г.</span>
+                                    </div>
+                                </div>
+
+                                <div class="featured-portfolio__mobile-preview">
+                                    <img src="assets/images/main-3.png" alt="Nexus detail">
+                                </div>
+
+                                <p>
+                                    Мы подготовили рендеры и ролик интерьера. Проект успешно прошёл презентацию —
+                                    клиент привлёк инвестиции и запустил строительство.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="services">
+                <div class="container">
+                    <h3 class="subtitle">Услуги</h3>
+                    <h2 class="services-title">Решаем любые задачи<br>по визуализации — под ключ.</h2>
+
+                    <ul class="services-list" id="servicesList">
+
+                        <!-- 1 -->
+                        <li class="service-row">
+                            <div class="service-row__bg-icon">
+                                <img src="assets/images/service-shape.svg" alt="">
+                            </div>
+                            <button type="button" class="service-row__head" aria-expanded="false">
+                                <div class="service-row__head-main">
+                                    <span class="service-row__title">Рендеры экстерьера</span>
+                                    <p class="service-row__head-description">
+                                        Покажите ваш проект в лучшем свете: фотореалистичные рендеры экстерьера
+                                    </p>
+                                </div>
+
+                                <svg class="service-row__chevron" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.75 18.125L14.5 10.875L7.25 18.125" stroke="white"
+                                          stroke-linecap="square"/>
+                                </svg>
+                            </button>
+
+                            <div class="service-row__body">
+
+
+                                <div class="service-row__content">
+                                    <div class="service-row__layout">
+                                        <div class="service-row__left-col">
+                                            <div class="service-row__meta">
+                                                <span>от 55 000 руб.*</span>
+                                                <span>от 2,5 дней*</span>
+                                            </div>
+                                            <p class="service-row__note">
+                                                * Итоговая цена и сроки определяются после анализа исходных данных
+                                                проекта.
+                                            </p>
+                                        </div>
+
+                                        <div class="service-row__right-col">
+                                            <button data-modal-open="contact"
+                                                    class="service-row__btn service-row__btn--desktop">
+                                                <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">Заказать проект</span>
+                        <span class="header-btn__text">Заказать проект</span>
+                    </span>
+                                            </button>
+                                        </div>
+
+                                        <button data-modal-open="contact"
+                                                class="service-row__btn service-row__btn--mobile"
+                                                aria-label="Заказать проект">
+                                            <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                      stroke="#1D45C5" stroke-width="1.5" stroke-linecap="square"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- 2 -->
+                        <li class="service-row">
+                            <div class="service-row__bg-icon">
+                                <img src="assets/images/service-shape.svg" alt="">
+                            </div>
+                            <button type="button" class="service-row__head" aria-expanded="false">
+                                <div class="service-row__head-main">
+                                    <span class="service-row__title">Рендеры интерьера</span>
+                                    <p class="service-row__head-description">
+                                        Покажите будущий интерьер во всей красе: фотореалистичные 3D-рендеры
+                                    </p>
+                                </div>
+
+                                <svg class="service-row__chevron" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.75 18.125L14.5 10.875L7.25 18.125" stroke="white"
+                                          stroke-linecap="square"/>
+                                </svg>
+                            </button>
+
+                            <div class="service-row__body">
+
+
+                                <div class="service-row__content">
+                                    <div class="service-row__layout">
+                                        <div class="service-row__left-col">
+                                            <div class="service-row__meta">
+                                                <span>от 42 000 руб.*</span>
+                                                <span>от 2 рабочих дней.*</span>
+                                            </div>
+                                            <p class="service-row__note">
+                                                * Итоговая цена и сроки определяются после анализа исходных данных
+                                                проекта.
+                                            </p>
+                                        </div>
+
+                                        <div class="service-row__right-col">
+                                            <button data-modal-open="contact"
+                                                    class="service-row__btn service-row__btn--desktop"> <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">Заказать проект</span>
+                        <span class="header-btn__text">Заказать проект</span>
+                    </span>
+                                            </button>
+                                        </div>
+
+                                        <button data-modal-open="contact"
+                                                class="service-row__btn service-row__btn--mobile"
+                                                aria-label="Заказать проект">
+                                            <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                      stroke="#1D45C5" stroke-width="1.5" stroke-linecap="square"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- 3 -->
+                        <li class="service-row">
+                            <div class="service-row__bg-icon">
+                                <img src="assets/images/service-shape.svg" alt="">
+                            </div>
+                            <button type="button" class="service-row__head" aria-expanded="false">
+                                <div class="service-row__head-main">
+                                    <span class="service-row__title">3D-ролики</span>
+                                    <p class="service-row__head-description">
+                                        Продавайте эффективнее: анимированные 3D-ролики для маркетинга
+                                    </p>
+                                </div>
+
+                                <svg class="service-row__chevron" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.75 18.125L14.5 10.875L7.25 18.125" stroke="white"
+                                          stroke-linecap="square"/>
+                                </svg>
+                            </button>
+
+                            <div class="service-row__body">
+
+
+                                <div class="service-row__content">
+                                    <div class="service-row__layout">
+                                        <div class="service-row__left-col">
+                                            <div class="service-row__meta">
+                                                <span>от 356 000 руб. за 30 секунд*</span>
+                                                <span>от 14 рабочих дней*</span>
+                                            </div>
+                                            <p class="service-row__note">
+                                                * Итоговая цена и сроки определяются после анализа исходных данных
+                                                проекта.
+                                            </p>
+                                        </div>
+
+                                        <div class="service-row__right-col">
+                                            <button data-modal-open="contact"
+                                                    class="service-row__btn service-row__btn--desktop"> <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">Заказать проект</span>
+                        <span class="header-btn__text">Заказать проект</span>
+                    </span>
+                                            </button>
+                                        </div>
+
+                                        <button data-modal-open="contact"
+                                                class="service-row__btn service-row__btn--mobile"
+                                                aria-label="Заказать проект">
+                                            <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                      stroke="#1D45C5" stroke-width="1.5" stroke-linecap="square"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- 4 -->
+                        <li class="service-row four">
+                            <div class="service-row__bg-icon">
+                                <img src="assets/images/service-shape.svg" alt="">
+                            </div>
+                            <button type="button" class="service-row__head" aria-expanded="false">
+                                <div class="service-row__head-main">
+                                    <span class="service-row__title">3D-туры</span>
+                                    <p class="service-row__head-description">
+                                        3D-тур: виртуальное путешествие по вашему проекту.<br> Продукт превращает
+                                        презентацию проекта из «пассивного просмотра» в интерактивный опыт.
+                                    </p>
+                                </div>
+
+                                <svg class="service-row__chevron" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.75 18.125L14.5 10.875L7.25 18.125" stroke="white"
+                                          stroke-linecap="square"/>
+                                </svg>
+                            </button>
+
+                            <div class="service-row__body">
+
+
+                                <div class="service-row__content">
+                                    <div class="service-row__layout">
+                                        <div class="service-row__left-col">
+                                            <div class="service-row__meta">
+                                                <span>от 45 000 руб. за одну точку*</span>
+                                                <span>от 3 рабочих дней.*</span>
+                                            </div>
+                                            <p class="service-row__note">
+                                                * Итоговая цена и сроки определяются после анализа исходных данных
+                                                проекта.
+                                            </p>
+                                        </div>
+
+                                        <div class="service-row__right-col">
+                                            <button data-modal-open="contact"
+                                                    class="service-row__btn service-row__btn--desktop"> <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">Заказать проект</span>
+                        <span class="header-btn__text">Заказать проект</span>
+                    </span>
+                                            </button>
+                                        </div>
+
+                                        <button data-modal-open="contact"
+                                                class="service-row__btn service-row__btn--mobile"
+                                                aria-label="Заказать проект">
+                                            <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                      stroke="#1D45C5" stroke-width="1.5" stroke-linecap="square"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- 5 special -->
+                        <li class="service-row service-row--special">
+                            <div class="service-row__bg-icon">
+                                <img src="assets/images/service-shape.svg" alt="">
+                            </div>
+                            <button type="button" class="service-row__head" aria-expanded="false">
+                                <div class="service-row__head-main service-row__head-main--special">
+                                    <span class="service-row__title">Интерактивные презентации на Unreal</span>
+
+                                    <p class="service-row__head-description service-row__head-description--special">
+                                        Визуализация и погружение
+                                    </p>
+                                </div>
+
+                                <svg class="service-row__chevron" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.75 18.125L14.5 10.875L7.25 18.125" stroke="white"
+                                          stroke-linecap="square"/>
+                                </svg>
+                            </button>
+
+                            <div class="service-row__body">
+
+
+                                <div class="service-row__content service-row__content--special">
+
+                                    <!-- DESKTOP + TABLET -->
+                                    <div class="service-row__special-layout service-row__special-layout--desktop">
+                                        <div class="service-row__special-video-col">
+                                            <div class="service-row__special-video">
+                                                <img src="assets/images/video.png"
+                                                     alt="Интерактивные презентации на Unreal">
+                                            </div>
+                                        </div>
+
+                                        <div class="service-row__special-right">
+                                            <div class="service-row__special-text">
+                                                <div class="service-row__special-group">
+                                                    <p>
+                                                        Фотореалистичные сцены с динамическим светом, материалами и
+                                                        эффектами.
+                                                        Свободное перемещение, смена времени суток и погоды.<br>
+                                                        Польза: клиент понимает пространство до строительства и быстрее
+                                                        принимает решение.
+                                                    </p>
+                                                </div>
+
+                                                <div class="service-row__special-group">
+                                                    <h4>Интерактивность</h4>
+                                                    <p>
+                                                        Выбор квартир с отображением планировок, видов и этажей в
+                                                        реальном времени.<br>
+                                                        Польза: быстрый и удобный подбор.
+                                                    </p>
+                                                </div>
+
+                                                <div class="service-row__special-group">
+                                                    <h4>Маркетинг и продажи</h4>
+                                                    <p>
+                                                        VR/AR-презентации и интерактивные стенды.<br>
+                                                        Польза: вау-эффект и усиление бренда.
+                                                    </p>
+                                                </div>
+
+                                                <div class="service-row__special-group">
+                                                    <h4>Работа с аудиторией</h4>
+                                                    <p>
+                                                        Онлайн-презентации и сценарии жизни в комплексе.<br>
+                                                        Польза: вовлечённость и удалённый охват.
+                                                    </p>
+                                                </div>
+
+                                                <div class="service-row__special-group">
+                                                    <h4>Дополнительно</h4>
+                                                    <p>Интеграция с CRM.</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="service-row__special-actions">
+                                                <button class="service-row__btn service-row__btn--desktop"
+                                                        data-modal-open="contact"> <span class="header-btn__text-wrap">
+                        <span class="header-btn__text">Заказать проект</span>
+                        <span class="header-btn__text">Заказать проект</span>
+                    </span>
+                                                </button>
+
+                                                <button class="service-row__btn service-row__btn--mobile"
+                                                        data-modal-open="contact" aria-label="Связаться с нами">
+                                                    <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                         xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                              stroke="#1D45C5" stroke-width="1.5"
+                                                              stroke-linecap="square"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MOBILE ONLY -->
+                                    <div class="service-row__special-layout-mobile">
+                                        <div class="service-row__special-mobile-text">
+                                            <div class="service-row__special-group">
+                                                <h4>Визуализация и погружение</h4>
+                                                <p>
+                                                    Фотореалистичные сцены с динамическим светом, материалами и
+                                                    эффектами.
+                                                    Свободное перемещение, смена времени суток и погоды.
+                                                </p>
+                                            </div>
+
+                                            <div class="service-row__special-group">
+                                                <h4>Интерактивность</h4>
+                                                <p>
+                                                    Выбор квартир с отображением планировок, видов и этажей в реальном
+                                                    времени.
+                                                    Польза: быстрый и удобный подбор.
+                                                </p>
+                                            </div>
+
+                                            <div class="service-row__special-group">
+                                                <h4>Маркетинг и продажи</h4>
+                                                <p>
+                                                    VR/AR-презентации и интерактивные стенды.
+                                                    Польза: вау-эффект и усиление бренда.
+                                                </p>
+                                            </div>
+
+                                            <div class="service-row__special-group">
+                                                <h4>Работа с аудиторией</h4>
+                                                <p>
+                                                    Онлайн-презентации и сценарии жизни в комплексе.
+                                                    Польза: вовлечённость и удалённый охват.
+                                                </p>
+                                            </div>
+
+                                            <div class="service-row__special-group">
+                                                <h4>Дополнительно</h4>
+                                                <p>Интеграция с CRM.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="service-row__special-mobile-bottom">
+                                            <div class="service-row__special-mobile-photo">
+                                                <img src="assets/images/video.png"
+                                                     alt="Интерактивные презентации на Unreal">
+                                            </div>
+
+                                            <button data-modal-open="contact"
+                                                    class="service-row__btn service-row__btn--mobile service-row__btn--mobile-special"
+                                                    aria-label="Связаться с нами">
+                                                <svg width="28" height="9" viewBox="0 0 28 9" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M26.6992 4.39396L0.749942 4.39396M26.6992 4.39396L23.3659 1.06063M26.6992 4.39396L23.3659 7.7273"
+                                                          stroke="#1D45C5" stroke-width="1.5" stroke-linecap="square"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </section>
+
+            <section class="advantages">
+                <div class="container">
+                    <h3 class="subtitle">Преимущества</h3>
+
+                    <div class="advantages-slider">
+                        <ul class="advantages-list">
+                            <li class="adv-card adv-card--1">
+                                <h3>Команда</h3>
+                                <div><img src="assets/images/main-4.svg" alt=""></div>
+                                <ul>
+                                    <li>30 штатных специалистов.</li>
+                                    <li>Параллельная работа нескольких специалистов сокращает сроки без потери
+                                        качества.
+                                    </li>
+                                    <li>Берём объёмы, с которыми не справятся маленькие команды.</li>
+                                </ul>
+                            </li>
+
+                            <li class="adv-card adv-card--2">
+                                <h3>Технологии и ресурсы</h3>
+                                <div><img src="assets/images/main-5.svg" alt=""></div>
+                                <ul>
+                                    <li>Повышаем качество рендеров с ИИ</li>
+                                    <li>Свои мощности для быстрого рендеринга сложных сцен</li>
+                                </ul>
+                            </li>
+
+                            <li class="adv-card adv-card--3">
+                                <h3>Экспертиза<br> и сервис</h3>
+                                <div><img src="assets/images/main-6.svg" alt=""></div>
+                                <ul>
+                                    <li>Специалисты с архитектурным образованием, которые видят проект целиком</li>
+                                    <li>4+ года на рынке — отработали процессы для максимальной эффективности.</li>
+                                    <li>200+ проектов — статистика говорит за нас.</li>
+                                    <li>Поддержка. Помогаем с ТЗ для точного результата.</li>
+                                    <li>Коммуникация. Мгновенный ответ на ваши запросы.</li>
+                                </ul>
+                            </li>
+
+                            <li class="adv-card adv-card--4">
+                                <h3>Качество<br> и стандарты</h3>
+                                <div><img src="assets/images/main-7.svg" alt=""></div>
+                                <ul>
+                                    <li>Единые стандарты — предсказуемый результат в каждом проекте.</li>
+                                    <li>Фирменный стиль — качество не зависит от исполнителя.</li>
+                                    <li>Двойной контроль качества: художник + арт-директор</li>
+                                    <li>ИИ-улучшения — ещё качественней и реалистичней.</li>
+                                    <li>Офисная команда — быстрые правки и согласования.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="trust">
+                <div class="container">
+                    <h3 class="subtitle">Нам доверяют</h3>
+                </div>
+
+                <div class="trust-marquee">
+                    <div class="trust-marquee__track">
+                        <div class="trust-marquee__item"><img src="assets/images/main-8.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-9.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-10.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-11.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-12.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-13.svg" alt=""></div>
+
+                        <div class="trust-marquee__item"><img src="assets/images/main-8.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-9.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-10.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-11.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-12.svg" alt=""></div>
+                        <div class="trust-marquee__item"><img src="assets/images/main-13.svg" alt=""></div>
+                    </div>
+                </div>
+            </section>
+
+            <img class="trust-img" src="assets/images/main-14.png" alt="">
+            <section class="request" id="request">
+                <div class="container">
+                    <span class="request-desc">Готовы обсудить задачу?</span>
+                    <div class="form-wrapper">
+                        <div class="form-content"><p>Оставьте заявку —<br>
+                            мы подберём решение<br>
+                            и предложим оптимальную стоимость.</p>
+                            <div class="request-links">
+                                <a href="mailto:info@decardstuido.ru">info@decardstuido.ru</a><a
+                                    href="tel:8 (812) 240- 89-49">8 (812) 240- 89-49</a>
+                            </div>
+                        </div>
+                        <form class="request-form" id="request-form" novalidate>
+                            <label class="request-field">
+                                <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Имя"
+                                        class="request-input"
+                                        maxlength="50"
+                                        autocomplete="name"
+                                >
+                                <span class="request-error">Заполните поле</span>
+                            </label>
+
+                            <label class="request-field">
+                                <input
+                                        type="tel"
+                                        name="phone"
+                                        placeholder="Телефон"
+                                        class="request-input"
+                                        maxlength="18"
+                                        autocomplete="tel"
+                                >
+                                <span class="request-error">Заполните поле</span>
+                            </label>
+
+                            <label class="request-checkbox">
+                                <input type="checkbox" class="request-checkbox-input" name="agree">
+                                <span class="request-checkbox-text">
+            Я даю согласие на обработку персональных данных, файлов cookie,
+            принимаю условия Соглашения об обработке персональных данных пользователей
+            и разрешаю передачу данных сервису «Яндекс.Метрика».
+        </span>
+                            </label>
+
+                            <button class="request-btn" type="submit">
+                                <span class="request-btn__text-wrap">
+                        <span class="request-btn__text">Отправить</span>
+                        <span class="request-btn__text">Отправить</span>
+                    </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="container footer-grid">
+                <a href="index.html">
+                    <picture class="footer-logo">
+                        <source media="(max-width:767px)" srcset="assets/images/header-logoMob.svg">
+                        <img src="assets/images/header-logo.svg" alt="">
+                    </picture>
+                </a>
+
+                <ul class="footer-list">
+                    <li>
+                        <a href="https://rutube.ru/channel/27016904/" class="link-slide">
+                            <span>RUTUBE</span>
+                            <span>RUTUBE</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.behance.net/decardstudio" class="link-slide">
+                            <span>BEHANCE</span>
+                            <span>BEHANCE</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/channel/UC_WUnhmQpvnXn4dGqW0dFTA" class="link-slide">
+                            <span>YOUTUBE</span>
+                            <span>YOUTUBE</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <a href="https://disk.yandex.ru/i/RcLZ3I_vHfQwmA" class="footer-politics link-slide">
+                    <span>Политика конфиденциальности</span>
+                    <span>Политика конфиденциальности</span>
+                </a>
+            </div>
+        </footer>
+        <div class="cookie" id="cookie" aria-hidden="true">
+            <div class="cookie__overlay"></div>
+            <div class="cookie__content">
+                <p class="cookie__text">
+                    Этот сайт использует Cookie для вашего удобства. Продолжая использовать этот сайт вы соглашаетесь с
+                    использованием cookie файлов
+                </p>
+
+                <div class="cookie__actions">
+                    <button class="cookie__btn cookie__btn--primary" type="button" data-cookie="accept">
+                           <span class="cookie__btn__text-wrap">
+                        <span class="cookie__btn__text">ПРИНЯТЬ</span>
+                        <span class="cookie__btn__text">ПРИНЯТЬ</span>
+                    </span>
+                    </button>
+                    <button class="cookie__btn cookie__btn--ghost" type="button" data-cookie="decline">
+                           <span class="cookie__btn__text-wrap">
+                        <span class="cookie__btn__text">ОТКЛОНИТЬ</span>
+                        <span class="cookie__btn__text">ОТКЛОНИТЬ</span>
+                    </span>
+                    </button>
+                </div>
+
+                <button class="cookie__close" type="button" aria-label="Закрыть" data-cookie="close">
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.549 0.750082L0.75004 20.5491M0.750041 0.750081L20.549 20.5491" stroke="white"
+                              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"></script>-->
+<script src="js/zoom.js"></script>
+<script src="js/cookie.js"></script>
+<script src="js/contacts.js"></script>
+<script src="js/header.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/index.js"></script>
+</body>

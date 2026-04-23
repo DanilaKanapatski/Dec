@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор проекта</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+<aside class="admin-sidebar">
+    <h2>Decard Admin</h2>
+    <nav>
+        <a href="/admin/index.html">Главная</a>
+        <a href="/admin/news.html">Новости / статьи</a>
+        <a href="/admin/projects.html" class="active">Проекты / портфолио</a>
+        <a href="/admin/logout">Выйти</a>
+    </nav>
+</aside>
+
+<main class="admin-main">
+    <div class="admin-topbar">
+        <h1 id="editor-title">Новый проект</h1>
+        <a class="admin-button ghost" href="/admin/projects.html">← К списку</a>
+    </div>
+
+    <form id="project-form" class="admin-form editor-form">
+        <!-- ОСНОВНЫЕ ПОЛЯ -->
+        <div class="field-grid">
+            <label class="field field--wide">
+                <span class="field__label">Название проекта *</span>
+                <input type="text" id="title" placeholder="ЖК Solar" required>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Slug (URL)</span>
+                <input type="text" id="slug" placeholder="оставь пустым — создастся автоматически">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Застройщик / место</span>
+                <input type="text" id="place" placeholder="Аквилон">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Город</span>
+                <input type="text" id="city" list="cities" placeholder="Москва">
+                <datalist id="cities">
+                    <option value="Москва"></option>
+                    <option value="Санкт-Петербург"></option>
+                    <option value="Казань"></option>
+                </datalist>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Сезон</span>
+                <select id="season">
+                    <option value="">— не указан —</option>
+                    <option value="Зима">Зима</option>
+                    <option value="Весна">Весна</option>
+                    <option value="Лето">Лето</option>
+                    <option value="Осень">Осень</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Год</span>
+                <input type="number" id="year" placeholder="2025" min="1990" max="2100">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Дата публикации</span>
+                <input type="date" id="published_at">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Статус</span>
+                <select id="status">
+                    <option value="draft">Черновик</option>
+                    <option value="published">Опубликован</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Порядок в портфолио</span>
+                <input type="number" id="sort_order" placeholder="0" value="0">
+                <span class="field__hint">Меньше = выше в списке портфолио. Например, «1» выведет проект первым.</span>
+            </label>
+
+            <label class="field field--wide">
+                <span class="field__label">Следующий проект (для ссылки внизу)</span>
+                <select id="next_project_id">
+                    <option value="0">— Автоматически (следующий по порядку) —</option>
+                </select>
+                <span class="field__hint">Какой проект показывать в блоке «Следующий проект» внизу страницы. Если оставить «Автоматически», возьмётся следующий по порядку сортировки.</span>
+            </label>
+        </div>
+
+        <!-- УСЛУГИ -->
+        <div class="field field--wide">
+            <span class="field__label">Услуги в проекте</span>
+            <div class="services-checkboxes" id="services-checkboxes">
+                <!-- заполнится JS -->
+            </div>
+        </div>
+
+        <!-- ОБЛОЖКА -->
+        <div class="field field--wide">
+            <span class="field__label">Обложка (главное изображение проекта) *</span>
+            <div class="cover-uploader">
+                <div class="cover-preview" id="coverPreview">
+                    <span class="cover-preview__empty">Нет обложки</span>
+                </div>
+                <div class="cover-uploader__controls">
+                    <input type="file" id="coverFile" accept="image/*" hidden>
+                    <button type="button" class="admin-button ghost" onclick="document.getElementById('coverFile').click()">Выбрать файл</button>
+                    <button type="button" class="admin-button ghost" id="coverClear">Убрать</button>
+                    <input type="text" id="cover_image" placeholder="или вставь путь к картинке">
+                </div>
+            </div>
+        </div>
+
+        <!-- О ПРОЕКТЕ -->
+        <div class="field field--wide">
+            <span class="field__label">О проекте (описание)</span>
+            <textarea id="about_text" rows="8" placeholder="Описание проекта. Поддерживаются переносы строк."></textarea>
+        </div>
+
+        <!-- 3D РОЛИК -->
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>3D-ролик (опционально)</h2>
+                <p class="admin-muted">Если заполнен, на странице проекта появится якорь «3D-ТУР» и секция с роликом. Можно загрузить видео (mp4) или изображение-превью.</p>
+            </div>
+
+            <div class="video-uploader">
+                <div class="video-preview" id="videoPreview">
+                    <span class="video-preview__empty">Файл не загружен</span>
+                </div>
+                <div class="video-uploader__controls">
+                    <input type="file" id="videoFile" accept="video/*,image/*" hidden>
+                    <button type="button" class="admin-button ghost" onclick="document.getElementById('videoFile').click()">Загрузить видео/картинку</button>
+                    <button type="button" class="admin-button ghost" id="videoClear">Убрать</button>
+                    <input type="text" id="video_src" placeholder="или путь к файлу">
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕНДЕРЫ ЭКСТЕРЬЕРА -->
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>Рендеры экстерьера</h2>
+                <p class="admin-muted">Если есть изображения — на странице проекта появится якорь «ЭКСТЕРЬЕР» и сетка рендеров. У каждого рендера можно включить режим «на всю ширину».</p>
+            </div>
+
+            <div id="exterior-renders" class="renders-admin"></div>
+
+            <div class="renders-toolbar">
+                <input type="file" id="exterior-files" accept="image/*" multiple hidden>
+                <button type="button" class="admin-button ghost" onclick="document.getElementById('exterior-files').click()">+ Загрузить изображения</button>
+            </div>
+        </div>
+
+        <!-- РЕНДЕРЫ ИНТЕРЬЕРА -->
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>Рендеры интерьера</h2>
+                <p class="admin-muted">Если есть изображения — на странице проекта появится якорь «ИНТЕРЬЕР» и сетка рендеров.</p>
+            </div>
+
+            <div id="interior-renders" class="renders-admin"></div>
+
+            <div class="renders-toolbar">
+                <input type="file" id="interior-files" accept="image/*" multiple hidden>
+                <button type="button" class="admin-button ghost" onclick="document.getElementById('interior-files').click()">+ Загрузить изображения</button>
+            </div>
+        </div>
+
+        <div class="editor-footer">
+            <button type="submit" class="admin-button">Сохранить</button>
+            <a class="admin-button ghost" href="/admin/projects.html">Отмена</a>
+        </div>
+    </form>
+</main>
+
+<script>
+    /* ============ УСЛУГИ ============ */
+    const ALL_SERVICES = [
+        'Рендеры экстерьера',
+        'Рендеры интерьера',
+        '3D-ролики',
+        '3D-туры',
+        'Интерактивные презентации на Unreal'
+    ];
+
+    function escAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+    function renderServicesCheckboxes(selected = []) {
+        const box = document.getElementById('services-checkboxes');
+        box.innerHTML = ALL_SERVICES.map(s => {
+            const checked = selected.includes(s) ? 'checked' : '';
+            return `
+                <label class="service-chk">
+                    <input type="checkbox" value="${escAttr(s)}" ${checked}>
+                    <span>${s}</span>
+                </label>
+            `;
+        }).join('');
+    }
+
+    function getSelectedServices() {
+        return Array.from(document.querySelectorAll('#services-checkboxes input:checked'))
+            .map(ch => ch.value);
+    }
+
+    /* ============ ЗАГРУЗКА ФАЙЛОВ ============ */
+    async function uploadOne(file) {
+        const fd = new FormData();
+        fd.append('image', file);
+        const res = await fetch('/admin/api/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.url) return data.url;
+        alert(data.error || 'Ошибка загрузки');
+        return null;
+    }
+
+    async function uploadMany(files) {
+        const fd = new FormData();
+        files.forEach(f => fd.append('images', f));
+        const res = await fetch('/admin/api/upload-multi', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.urls) return data.urls;
+        alert(data.error || 'Ошибка загрузки');
+        return null;
+    }
+
+    async function uploadMedia(file) {
+        const fd = new FormData();
+        fd.append('media', file);
+        const res = await fetch('/admin/api/upload-media', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.url) return data;
+        alert(data.error || 'Ошибка загрузки');
+        return null;
+    }
+
+    /* ============ ОБЛОЖКА ============ */
+    const coverPreview = document.getElementById('coverPreview');
+    const coverInput = document.getElementById('cover_image');
+    const coverFile = document.getElementById('coverFile');
+
+    function renderCover(src) {
+        coverPreview.innerHTML = src
+            ? `<img src="${escAttr(src)}" alt="">`
+            : '<span class="cover-preview__empty">Нет обложки</span>';
+    }
+
+    coverFile.addEventListener('change', async () => {
+        const file = coverFile.files[0];
+        if (!file) return;
+        const url = await uploadOne(file);
+        if (url) {
+            coverInput.value = url;
+            renderCover(url);
+        }
+    });
+    coverInput.addEventListener('input', () => renderCover(coverInput.value));
+    document.getElementById('coverClear').addEventListener('click', () => {
+        coverInput.value = '';
+        renderCover('');
+    });
+
+    /* ============ 3D РОЛИК (видео или картинка) ============ */
+    const videoPreview = document.getElementById('videoPreview');
+    const videoInput = document.getElementById('video_src');
+    const videoFile = document.getElementById('videoFile');
+
+    function renderVideo(src) {
+        if (!src) {
+            videoPreview.innerHTML = '<span class="video-preview__empty">Файл не загружен</span>';
+            return;
+        }
+        // определяем тип по расширению
+        const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
+        if (isVideo) {
+            videoPreview.innerHTML = `<video src="${escAttr(src)}" controls muted></video>`;
+        } else {
+            videoPreview.innerHTML = `<img src="${escAttr(src)}" alt="">`;
+        }
+    }
+
+    videoFile.addEventListener('change', async () => {
+        const file = videoFile.files[0];
+        if (!file) return;
+        const result = await uploadMedia(file);
+        if (result && result.url) {
+            videoInput.value = result.url;
+            renderVideo(result.url);
+        }
+    });
+    videoInput.addEventListener('input', () => renderVideo(videoInput.value));
+    document.getElementById('videoClear').addEventListener('click', () => {
+        videoInput.value = '';
+        renderVideo('');
+    });
+
+    /* ============ РЕНДЕРЫ (экстерьера / интерьера) ============ */
+    // Стейт рендеров
+    let exteriorRenders = []; // [{src, wide}]
+    let interiorRenders = [];
+
+    function renderRendersList(listEl, items, onChange) {
+        if (!items.length) {
+            listEl.innerHTML = '<div class="renders-empty">Пока нет изображений. Нажмите кнопку ниже, чтобы загрузить.</div>';
+            return;
+        }
+
+        listEl.innerHTML = items.map((it, i) => `
+            <div class="render-card ${it.wide ? 'is-wide' : ''}" data-i="${i}">
+                <div class="render-card__preview">
+                    <img src="${escAttr(it.src)}" alt="">
+                </div>
+                <div class="render-card__controls">
+                    <label class="render-wide-toggle">
+                        <input type="checkbox" class="render-wide" ${it.wide ? 'checked' : ''}>
+                        <span>На всю ширину</span>
+                    </label>
+                    <div class="render-order">
+                        <button type="button" class="block__btn render-up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                        <button type="button" class="block__btn render-down" ${i === items.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button type="button" class="block__btn block__btn--del render-del">✕</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        listEl.querySelectorAll('.render-card').forEach(card => {
+            const i = +card.dataset.i;
+            card.querySelector('.render-wide').addEventListener('change', e => {
+                items[i].wide = e.target.checked;
+                onChange();
+            });
+            card.querySelector('.render-up').addEventListener('click', () => {
+                if (i === 0) return;
+                [items[i - 1], items[i]] = [items[i], items[i - 1]];
+                onChange();
+            });
+            card.querySelector('.render-down').addEventListener('click', () => {
+                if (i === items.length - 1) return;
+                [items[i], items[i + 1]] = [items[i + 1], items[i]];
+                onChange();
+            });
+            card.querySelector('.render-del').addEventListener('click', () => {
+                if (!confirm('Удалить этот рендер?')) return;
+                items.splice(i, 1);
+                onChange();
+            });
+        });
+    }
+
+    const exteriorListEl = document.getElementById('exterior-renders');
+    const interiorListEl = document.getElementById('interior-renders');
+
+    function refreshExterior() { renderRendersList(exteriorListEl, exteriorRenders, refreshExterior); }
+    function refreshInterior() { renderRendersList(interiorListEl, interiorRenders, refreshInterior); }
+
+    document.getElementById('exterior-files').addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+        const urls = await uploadMany(files);
+        if (urls) {
+            exteriorRenders.push(...urls.map(src => ({ src, wide: false })));
+            refreshExterior();
+        }
+        e.target.value = '';
+    });
+
+    document.getElementById('interior-files').addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+        const urls = await uploadMany(files);
+        if (urls) {
+            interiorRenders.push(...urls.map(src => ({ src, wide: false })));
+            refreshInterior();
+        }
+        e.target.value = '';
+    });
+
+    /* ============ ЗАГРУЗКА / СОХРАНЕНИЕ ============ */
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+
+    async function loadProjectsList() {
+        try {
+            const res = await fetch('/admin/api/projects');
+            if (!res.ok) return;
+            const all = await res.json();
+            const select = document.getElementById('next_project_id');
+            // Убираем текущий проект из вариантов
+            const others = all.filter(p => String(p.id) !== String(id));
+            others.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.title}${p.status === 'draft' ? ' (черновик)' : ''}`;
+                select.appendChild(opt);
+            });
+        } catch (e) { /* ignore */ }
+    }
+
+    async function loadItem() {
+        renderServicesCheckboxes([]);
+        refreshExterior();
+        refreshInterior();
+        await loadProjectsList();
+
+        if (!id) return;
+
+        document.getElementById('editor-title').textContent = 'Редактирование проекта';
+
+        const res = await fetch('/admin/api/projects/' + id);
+        if (res.status === 401) { location.href = '/admin/login.html'; return; }
+        const item = await res.json();
+
+        document.getElementById('title').value = item.title || '';
+        document.getElementById('slug').value = item.slug || '';
+        document.getElementById('place').value = item.place || '';
+        document.getElementById('city').value = item.city || '';
+        document.getElementById('season').value = item.season || '';
+        document.getElementById('year').value = item.year || '';
+        document.getElementById('published_at').value = item.published_at || '';
+        document.getElementById('status').value = item.status || 'draft';
+        document.getElementById('sort_order').value = item.sort_order || 0;
+        document.getElementById('next_project_id').value = item.next_project_id || 0;
+        document.getElementById('about_text').value = item.about_text || '';
+
+        coverInput.value = item.cover_image || '';
+        renderCover(item.cover_image || '');
+
+        videoInput.value = item.video_src || '';
+        renderVideo(item.video_src || '');
+
+        try {
+            const services = JSON.parse(item.services || '[]');
+            renderServicesCheckboxes(services);
+        } catch (e) { renderServicesCheckboxes([]); }
+
+        try {
+            const ext = JSON.parse(item.exterior_renders || '[]');
+            exteriorRenders = Array.isArray(ext) ? ext : [];
+        } catch (e) { exteriorRenders = []; }
+
+        try {
+            const int = JSON.parse(item.interior_renders || '[]');
+            interiorRenders = Array.isArray(int) ? int : [];
+        } catch (e) { interiorRenders = []; }
+
+        refreshExterior();
+        refreshInterior();
+    }
+
+    document.getElementById('project-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const payload = {
+            title: document.getElementById('title').value.trim(),
+            slug: document.getElementById('slug').value.trim(),
+            cover_image: coverInput.value.trim(),
+            place: document.getElementById('place').value.trim(),
+            services: getSelectedServices(),
+            city: document.getElementById('city').value.trim(),
+            season: document.getElementById('season').value,
+            year: document.getElementById('year').value,
+            published_at: document.getElementById('published_at').value,
+            status: document.getElementById('status').value,
+            sort_order: document.getElementById('sort_order').value,
+            next_project_id: document.getElementById('next_project_id').value,
+            about_text: document.getElementById('about_text').value,
+            video_src: videoInput.value.trim(),
+            exterior_renders: exteriorRenders,
+            interior_renders: interiorRenders
+        };
+
+        if (!payload.title) {
+            alert('Укажите название проекта');
+            return;
+        }
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? '/admin/api/projects/' + id : '/admin/api/projects';
+
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            location.href = '/admin/projects.html';
+        } else {
+            alert(data.error || 'Ошибка сохранения');
+        }
+    });
+
+    loadItem();
+</script>
+</body>
+</html>

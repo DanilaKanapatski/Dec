@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор статьи</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+<aside class="admin-sidebar">
+    <h2>Decard Admin</h2>
+    <nav>
+        <a href="/admin/index.html">Главная</a>
+        <a href="/admin/news.html">Новости / статьи</a>
+        <a href="/admin/projects.html">Проекты / портфолио</a>
+        <a href="/admin/logout">Выйти</a>
+    </nav>
+</aside>
+
+<main class="admin-main">
+    <div class="admin-topbar">
+        <h1 id="editor-title">Новая статья</h1>
+        <a class="admin-button ghost" href="/admin/news.html">← К списку</a>
+    </div>
+
+    <form id="news-form" class="admin-form editor-form">
+        <div class="field-grid">
+            <label class="field field--wide">
+                <span class="field__label">Заголовок *</span>
+                <input type="text" id="title" placeholder="Название статьи" required>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Slug (URL)</span>
+                <input type="text" id="slug" placeholder="оставь пустым — создастся автоматически">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Категория *</span>
+                <select id="category">
+                    <option value="Мероприятия">Мероприятия</option>
+                    <option value="Статьи">Статьи</option>
+                    <option value="Работы">Работы</option>
+                    <option value="Культура компании">Культура компании</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span class="field__label">Дата публикации</span>
+                <input type="date" id="published_at">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Время на чтение</span>
+                <input type="text" id="reading_time" placeholder="например: 25 мин">
+            </label>
+
+            <label class="field">
+                <span class="field__label">Статус</span>
+                <select id="status">
+                    <option value="draft">Черновик</option>
+                    <option value="published">Опубликовано</option>
+                </select>
+            </label>
+
+            <label class="field field--wide">
+                <span class="field__label">Краткое описание (превью)</span>
+                <textarea id="preview" placeholder="Короткий текст для карточки в блоге (необязательно)"></textarea>
+            </label>
+        </div>
+
+        <div class="field field--wide">
+            <span class="field__label">Обложка</span>
+            <div class="cover-uploader">
+                <div class="cover-preview" id="coverPreview">
+                    <span class="cover-preview__empty">Нет обложки</span>
+                </div>
+                <div class="cover-uploader__controls">
+                    <input type="file" id="coverFile" accept="image/*" hidden>
+                    <button type="button" class="admin-button ghost" onclick="document.getElementById('coverFile').click()">Выбрать файл</button>
+                    <button type="button" class="admin-button ghost" id="coverClear">Убрать</button>
+                    <input type="text" id="cover_image" placeholder="или вставь путь к картинке">
+                </div>
+            </div>
+        </div>
+
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>Содержимое статьи</h2>
+                <p class="admin-muted">Добавляйте блоки в нужном порядке. Их можно перемещать стрелками и удалять.</p>
+            </div>
+
+            <div id="blocks" class="blocks"></div>
+
+            <div class="blocks-toolbar">
+                <button type="button" class="block-add" data-type="heading">+ Заголовок</button>
+                <button type="button" class="block-add" data-type="subheading">+ Подзаголовок</button>
+                <button type="button" class="block-add" data-type="text">+ Текст</button>
+                <button type="button" class="block-add" data-type="list">+ Список</button>
+                <button type="button" class="block-add" data-type="image">+ Изображение</button>
+                <button type="button" class="block-add" data-type="slider">+ Слайдер</button>
+            </div>
+        </div>
+
+        <div class="editor-footer">
+            <button type="submit" class="admin-button">Сохранить</button>
+            <a class="admin-button ghost" href="/admin/news.html">Отмена</a>
+        </div>
+    </form>
+</main>
+
+<script>
+/* ==================== БЛОКОВЫЙ РЕДАКТОР ==================== */
+
+const blocksEl = document.getElementById('blocks');
+let blocks = []; // массив { type, ...data }
+let blockIdCounter = 0;
+
+function uid() { return 'b' + (++blockIdCounter); }
+
+function addBlock(type, data = {}) {
+    const block = { id: uid(), type, ...data };
+    if (type === 'heading' && block.text === undefined) block.text = '';
+    if (type === 'subheading' && block.text === undefined) block.text = '';
+    if (type === 'text' && block.text === undefined) block.text = '';
+    if (type === 'list' && !Array.isArray(block.items)) block.items = [''];
+    if (type === 'image' && block.src === undefined) block.src = '';
+    if (type === 'slider' && !Array.isArray(block.images)) block.images = [];
+    blocks.push(block);
+    render();
+}
+
+function removeBlock(id) {
+    blocks = blocks.filter(b => b.id !== id);
+    render();
+}
+
+function moveBlock(id, dir) {
+    const i = blocks.findIndex(b => b.id === id);
+    if (i < 0) return;
+    const j = i + dir;
+    if (j < 0 || j >= blocks.length) return;
+    [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
+    render();
+}
+
+function updateBlock(id, patch) {
+    const b = blocks.find(x => x.id === id);
+    if (!b) return;
+    Object.assign(b, patch);
+}
+
+function render() {
+    blocksEl.innerHTML = '';
+    if (!blocks.length) {
+        blocksEl.innerHTML = '<div class="blocks-empty">Пока ни одного блока. Добавьте первый ниже ↓</div>';
+        return;
+    }
+
+    blocks.forEach((b, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'block block--' + b.type;
+        wrap.dataset.id = b.id;
+
+        wrap.innerHTML = `
+            <div class="block__head">
+                <span class="block__type">${typeLabel(b.type)}</span>
+                <div class="block__actions">
+                    <button type="button" class="block__btn" data-act="up" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                    <button type="button" class="block__btn" data-act="down" ${idx === blocks.length - 1 ? 'disabled' : ''}>↓</button>
+                    <button type="button" class="block__btn block__btn--del" data-act="del">✕</button>
+                </div>
+            </div>
+            <div class="block__body">${bodyHtml(b)}</div>
+        `;
+
+        // кнопки управления
+        wrap.querySelector('[data-act="up"]').addEventListener('click', () => moveBlock(b.id, -1));
+        wrap.querySelector('[data-act="down"]').addEventListener('click', () => moveBlock(b.id, 1));
+        wrap.querySelector('[data-act="del"]').addEventListener('click', () => {
+            if (confirm('Удалить этот блок?')) removeBlock(b.id);
+        });
+
+        // бинды под типы
+        bindBlockBody(wrap, b);
+
+        blocksEl.appendChild(wrap);
+    });
+}
+
+function typeLabel(type) {
+    return {
+        heading: 'Заголовок',
+        subheading: 'Подзаголовок',
+        text: 'Текст',
+        list: 'Список',
+        image: 'Изображение',
+        slider: 'Слайдер'
+    }[type] || type;
+}
+
+function bodyHtml(b) {
+    switch (b.type) {
+        case 'heading':
+            return `<input type="text" class="block-input block-input--h" placeholder="Заголовок раздела" value="${escAttr(b.text)}">`;
+        case 'subheading':
+            return `<input type="text" class="block-input block-input--sub" placeholder="Подзаголовок" value="${escAttr(b.text)}">`;
+        case 'text':
+            return `<textarea class="block-input block-input--text" placeholder="Текст абзаца">${escText(b.text)}</textarea>`;
+        case 'list':
+            return `
+                <div class="list-items">
+                    ${b.items.map((it, i) => `
+                        <div class="list-row">
+                            <input type="text" class="block-input list-input" data-i="${i}" placeholder="Пункт списка" value="${escAttr(it)}">
+                            <button type="button" class="block__btn list-del" data-i="${i}">✕</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="admin-button ghost admin-button--small list-add">+ Добавить пункт</button>
+            `;
+        case 'image':
+            return `
+                <div class="img-block">
+                    ${b.src ? `<img class="img-preview" src="${escAttr(b.src)}" alt="">` : '<div class="img-preview img-preview--empty">Нет изображения</div>'}
+                    <div class="img-controls">
+                        <input type="file" class="img-file" accept="image/*" hidden>
+                        <button type="button" class="admin-button ghost admin-button--small img-upload">Загрузить</button>
+                        <input type="text" class="block-input img-src" placeholder="или путь к изображению" value="${escAttr(b.src)}">
+                    </div>
+                </div>
+            `;
+        case 'slider':
+            return `
+                <div class="slider-block">
+                    <div class="slider-previews">
+                        ${b.images.map((src, i) => `
+                            <div class="slider-thumb">
+                                <img src="${escAttr(src)}" alt="">
+                                <button type="button" class="slider-thumb__del" data-i="${i}">✕</button>
+                            </div>
+                        `).join('') || '<div class="slider-empty">Слайдов пока нет</div>'}
+                    </div>
+                    <div class="slider-controls">
+                        <input type="file" class="slider-files" accept="image/*" multiple hidden>
+                        <button type="button" class="admin-button ghost admin-button--small slider-upload">+ Загрузить изображения</button>
+                    </div>
+                </div>
+            `;
+        default:
+            return '';
+    }
+}
+
+function bindBlockBody(wrap, b) {
+    switch (b.type) {
+        case 'heading':
+        case 'subheading': {
+            const input = wrap.querySelector('.block-input');
+            input.addEventListener('input', e => updateBlock(b.id, { text: e.target.value }));
+            break;
+        }
+        case 'text': {
+            const ta = wrap.querySelector('textarea');
+            ta.addEventListener('input', e => updateBlock(b.id, { text: e.target.value }));
+            break;
+        }
+        case 'list': {
+            wrap.querySelectorAll('.list-input').forEach(inp => {
+                inp.addEventListener('input', e => {
+                    const i = +e.target.dataset.i;
+                    b.items[i] = e.target.value;
+                });
+            });
+            wrap.querySelectorAll('.list-del').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const i = +btn.dataset.i;
+                    b.items.splice(i, 1);
+                    if (!b.items.length) b.items = [''];
+                    render();
+                });
+            });
+            wrap.querySelector('.list-add').addEventListener('click', () => {
+                b.items.push('');
+                render();
+            });
+            break;
+        }
+        case 'image': {
+            const fileInput = wrap.querySelector('.img-file');
+            const btn = wrap.querySelector('.img-upload');
+            const srcInput = wrap.querySelector('.img-src');
+
+            btn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async () => {
+                const file = fileInput.files[0];
+                if (!file) return;
+                const url = await uploadOne(file);
+                if (url) {
+                    updateBlock(b.id, { src: url });
+                    render();
+                }
+            });
+            srcInput.addEventListener('input', e => updateBlock(b.id, { src: e.target.value }));
+            break;
+        }
+        case 'slider': {
+            const fileInput = wrap.querySelector('.slider-files');
+            const btn = wrap.querySelector('.slider-upload');
+
+            btn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async () => {
+                const files = Array.from(fileInput.files || []);
+                if (!files.length) return;
+                const urls = await uploadMany(files);
+                if (urls && urls.length) {
+                    b.images = [...b.images, ...urls];
+                    render();
+                }
+            });
+            wrap.querySelectorAll('.slider-thumb__del').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const i = +btn.dataset.i;
+                    b.images.splice(i, 1);
+                    render();
+                });
+            });
+            break;
+        }
+    }
+}
+
+/* Загрузка файлов */
+async function uploadOne(file) {
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await fetch('/admin/api/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.url) return data.url;
+    alert(data.error || 'Ошибка загрузки');
+    return null;
+}
+
+async function uploadMany(files) {
+    const fd = new FormData();
+    files.forEach(f => fd.append('images', f));
+    const res = await fetch('/admin/api/upload-multi', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.urls) return data.urls;
+    alert(data.error || 'Ошибка загрузки');
+    return null;
+}
+
+function escAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+function escText(s) { return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ==================== КНОПКИ ДОБАВЛЕНИЯ ==================== */
+
+document.querySelectorAll('.block-add').forEach(btn => {
+    btn.addEventListener('click', () => addBlock(btn.dataset.type));
+});
+
+/* ==================== ОБЛОЖКА ==================== */
+
+const coverPreview = document.getElementById('coverPreview');
+const coverInput = document.getElementById('cover_image');
+const coverFile = document.getElementById('coverFile');
+
+function renderCover(src) {
+    if (src) {
+        coverPreview.innerHTML = `<img src="${escAttr(src)}" alt="">`;
+    } else {
+        coverPreview.innerHTML = '<span class="cover-preview__empty">Нет обложки</span>';
+    }
+}
+
+coverFile.addEventListener('change', async () => {
+    const file = coverFile.files[0];
+    if (!file) return;
+    const url = await uploadOne(file);
+    if (url) {
+        coverInput.value = url;
+        renderCover(url);
+    }
+});
+coverInput.addEventListener('input', () => renderCover(coverInput.value));
+document.getElementById('coverClear').addEventListener('click', () => {
+    coverInput.value = '';
+    renderCover('');
+});
+
+/* ==================== ЗАГРУЗКА / СОХРАНЕНИЕ ==================== */
+
+const params = new URLSearchParams(location.search);
+const id = params.get('id');
+
+async function loadItem() {
+    if (!id) {
+        render();
+        return;
+    }
+    document.getElementById('editor-title').textContent = 'Редактирование статьи';
+
+    const res = await fetch('/admin/api/news/' + id);
+    if (res.status === 401) { location.href = '/admin/login.html'; return; }
+    const item = await res.json();
+
+    document.getElementById('title').value = item.title || '';
+    document.getElementById('slug').value = item.slug || '';
+    document.getElementById('preview').value = item.preview || '';
+    document.getElementById('category').value = item.category || 'Статьи';
+    document.getElementById('reading_time').value = item.reading_time || '';
+    document.getElementById('published_at').value = item.published_at || '';
+    document.getElementById('status').value = item.status || 'draft';
+    coverInput.value = item.cover_image || '';
+    renderCover(item.cover_image || '');
+
+    try {
+        const parsed = JSON.parse(item.content || '[]');
+        if (Array.isArray(parsed)) {
+            blocks = parsed.map(b => ({ id: uid(), ...b }));
+        }
+    } catch (e) { blocks = []; }
+
+    render();
+}
+
+document.getElementById('news-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // чистим blocks от служебных полей id
+    const cleanBlocks = blocks.map(({ id, ...rest }) => rest);
+
+    const payload = {
+        title: document.getElementById('title').value.trim(),
+        slug: document.getElementById('slug').value.trim(),
+        preview: document.getElementById('preview').value,
+        cover_image: coverInput.value.trim(),
+        category: document.getElementById('category').value,
+        reading_time: document.getElementById('reading_time').value.trim(),
+        published_at: document.getElementById('published_at').value,
+        status: document.getElementById('status').value,
+        content: JSON.stringify(cleanBlocks)
+    };
+
+    if (!payload.title) {
+        alert('Укажите заголовок');
+        return;
+    }
+
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? '/admin/api/news/' + id : '/admin/api/news';
+
+    const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        location.href = '/admin/news.html';
+    } else {
+        alert(data.error || 'Ошибка сохранения');
+    }
+});
+
+loadItem();
+</script>
+</body>
+</html>
