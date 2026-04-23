@@ -323,9 +323,13 @@ function initPinnedPortfolio() {
         }
     ];
 
+    const HOLD = 0.34;
+    const MOVE = 0.72;
+
     let currentIndex = -1;
     let trigger = null;
     let resizeTimer = null;
+    let vvTimer = null;
     let lastWindowWidth = window.innerWidth;
 
     function getStableViewportHeight() {
@@ -343,6 +347,28 @@ function initPinnedPortfolio() {
         if (!Number.isNaN(computedZoom) && computedZoom > 0) return computedZoom;
 
         return 1;
+    }
+
+    function getStageCssPx() {
+        const zoomFactor = getZoomFactor();
+        const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        const isDesktopScaled = window.innerWidth >= 1920 && zoomFactor !== 1;
+
+        let stageCssPx;
+
+        if (isDesktopScaled) {
+            stageCssPx = Math.round(window.innerHeight / zoomFactor);
+        } else if (isTouch) {
+            stageCssPx = Math.round(getStableViewportHeight());
+        } else {
+            stageCssPx = Math.round(window.innerHeight);
+        }
+
+        return Math.max(stageCssPx, 320);
+    }
+
+    function getTotalFactor(slidesCount) {
+        return (slidesCount - 1) * (HOLD + MOVE) + HOLD;
     }
 
     function setCardContent(index, force = false) {
@@ -418,29 +444,35 @@ function initPinnedPortfolio() {
         section.style.height = '';
     }
 
+    function updatePinnedPortfolioHeights() {
+        const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        if (!isTouch || !trigger) return;
+
+        const slidesCount = bgSlides.length;
+        const totalFactor = getTotalFactor(slidesCount);
+        const stageCssPx = getStageCssPx();
+
+        stage.style.height = `${stageCssPx}px`;
+        section.style.height = `${Math.round(stageCssPx * (totalFactor + 1))}px`;
+
+        const mediaHeight = media.clientHeight;
+        const previewHeight = previewViewport.clientHeight;
+
+        gsap.set(bgSlides, { height: mediaHeight });
+        gsap.set(bgTrack, { height: mediaHeight * slidesCount });
+
+        gsap.set(previewSlides, { height: previewHeight });
+        gsap.set(previewTrack, { height: previewHeight * slidesCount });
+
+        ScrollTrigger.refresh();
+    }
+
     function buildPinnedPortfolio() {
         destroyPinnedPortfolio();
 
         const slidesCount = bgSlides.length;
-        const HOLD = 0.34;
-        const MOVE = 0.72;
-        const TOTAL = (slidesCount - 1) * (HOLD + MOVE) + HOLD;
-
-        const zoomFactor = getZoomFactor();
-        const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-        const isDesktopScaled = window.innerWidth >= 1920 && zoomFactor !== 1;
-
-        let stageCssPx;
-
-        if (isDesktopScaled) {
-            stageCssPx = Math.round(window.innerHeight / zoomFactor);
-        } else if (isTouch) {
-            stageCssPx = Math.round(getStableViewportHeight());
-        } else {
-            stageCssPx = Math.round(window.innerHeight);
-        }
-
-        if (stageCssPx < 320) stageCssPx = 320;
+        const totalFactor = getTotalFactor(slidesCount);
+        const stageCssPx = getStageCssPx();
 
         stage.style.width = '100%';
         stage.style.maxWidth = '100%';
@@ -457,7 +489,7 @@ function initPinnedPortfolio() {
         gsap.set(previewSlides, { height: previewHeight });
         gsap.set(previewTrack, { height: previewHeight * slidesCount });
 
-        section.style.height = `${Math.round(stageCssPx * (TOTAL + 1))}px`;
+        section.style.height = `${Math.round(stageCssPx * (totalFactor + 1))}px`;
 
         setCardContent(0, true);
 
@@ -483,7 +515,7 @@ function initPinnedPortfolio() {
             animation: tl,
             trigger: section,
             start: 'top top',
-            end: () => `+=${stageCssPx * TOTAL}`,
+            end: () => `+=${getStageCssPx() * totalFactor}`,
             scrub: 1,
             invalidateOnRefresh: false,
             onUpdate: () => {
@@ -518,6 +550,15 @@ function initPinnedPortfolio() {
             buildPinnedPortfolio();
         }, 350);
     });
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            clearTimeout(vvTimer);
+            vvTimer = setTimeout(() => {
+                updatePinnedPortfolioHeights();
+            }, 120);
+        });
+    }
 
     buildPinnedPortfolio();
 }
