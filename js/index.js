@@ -103,10 +103,12 @@ function initHeroScene() {
       Правая: завершается на 1.0× → ≈ 1.0× скорости → правая быстрее левой
       (обе при этом медленнее чем было, правая всё равно опережает)
     */
+    const leftSpeedFactor = window.innerWidth <= 1100 ? 0.9 : 1.5;
+
     const stCfgLeft = {
         trigger: stage,
         start: 'top top',
-        end: `+=${stageH * 1.5}`,   // левая — самая медленная
+        end: `+=${stageH * leftSpeedFactor}`,   // левая — самая медленная
         scrub: 1.2,
         invalidateOnRefresh: true
     };
@@ -233,7 +235,7 @@ function initHeroArrow() {
     if (!arrow) return;
 
     arrow.addEventListener('click', () => {
-        const nextSection = document.querySelector('.featured-portfolio');
+        const nextSection = document.querySelector('.stats-section');
         if (nextSection && lenis) {
             lenis.scrollTo(nextSection, {
                 offset: 0,

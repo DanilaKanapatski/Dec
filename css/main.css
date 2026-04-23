@@ -390,7 +390,7 @@
 
     .main-panel--left {
         grid-column: 1;
-        padding: 32px 11px 0 32px;
+        padding: 32px 11px 24px 32px;
         display: flex;
         flex-direction: column;
         /* Контент прижат к НИЗУ — при росте высоты панели текст остаётся внизу */
@@ -415,7 +415,7 @@
 
     .main-panel--right {
         grid-column: 2;
-        padding: 24px 32px 0 32px;
+        padding: 24px 32px 24px 32px;
         display: flex;
         /* Контент прижат к НИЗУ — при росте высоты панели текст остаётся внизу */
         align-items: flex-end;
@@ -524,7 +524,7 @@
         font-size: 14px;
         line-height: 140%;
         color: var(--color-main-white);
-        max-width: 329px;
+        max-width: 45%;
     }
 
     .main-stat {
@@ -4173,4 +4173,14 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
+}
+
+@media screen and (max-width: 1500px) {
+    /*.main-desc {*/
+    /*    max-width: 260px;*/
+    /*}*/
+
+    /*.main-panel--right {*/
+    /*    clip-path: polygon(0 60px, 49% 60px, 49% 0, 100% 0, 100% 100%, 0 100%);*/
+    /*}*/
 }
