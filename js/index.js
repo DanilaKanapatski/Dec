@@ -427,18 +427,17 @@ function initPinnedPortfolio() {
         const TOTAL = (slidesCount - 1) * (HOLD + MOVE) + HOLD;
 
         const zoomFactor = getZoomFactor();
-        const headerH = document.querySelector('.header')?.offsetHeight || 0;
         const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
         const isDesktopScaled = window.innerWidth >= 1920 && zoomFactor !== 1;
 
         let stageCssPx;
 
         if (isDesktopScaled) {
-            stageCssPx = Math.round((window.innerHeight - headerH) / zoomFactor);
+            stageCssPx = Math.round(window.innerHeight / zoomFactor);
         } else if (isTouch) {
-            stageCssPx = Math.round(getStableViewportHeight() - headerH);
+            stageCssPx = Math.round(getStableViewportHeight());
         } else {
-            stageCssPx = Math.round(window.innerHeight - headerH);
+            stageCssPx = Math.round(window.innerHeight);
         }
 
         if (stageCssPx < 320) stageCssPx = 320;

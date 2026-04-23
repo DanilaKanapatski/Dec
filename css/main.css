@@ -640,29 +640,22 @@
     margin-top: 150px;
     position: relative;
     background: var(--color-bg-black);
-    width: 100%;
-    max-width: 100%;
 }
 
 .featured-portfolio__stage {
     position: sticky;
     top: 0;
-
-    height: calc(100svh - var(--header-h, 50px));
-
+    height: 100svh;
+    overflow: hidden;
     background: var(--color-bg-black);
     display: flex;
     flex-direction: column;
-
-    overflow: visible;
-    width: 100%;
-    max-width: 100%;
 }
 
 .featured-portfolio__header {
     flex-shrink: 0;
     width: 100%;
-    padding: 24px 0;
+    padding: calc(var(--header-h, 50px) + 24px) 0 24px;
     background: var(--color-bg-black);
     position: relative;
     z-index: 5;
