@@ -2400,7 +2400,7 @@
     margin-top: 120px;
     padding-top: 92px;
     z-index: 2;
-    margin-right: -1px;
+    margin-right: -0.8px;
 }
 
 .adv-card--2 {
@@ -3188,6 +3188,7 @@
     .adv-card--3,
     .adv-card--4 {
         margin-top: 0;
+        z-index: auto;
     }
 
     .adv-card--2,
@@ -3197,7 +3198,9 @@
 
 
 
-    .adv-card:nth-child(2n) {
+
+
+    .adv-card {
         margin-left: -1px;
     }
 
@@ -3206,15 +3209,29 @@
     }
 
     .advantages-list .adv-card--3 {
-        margin-top: -60px;
+        margin-top: -61px;
     }
 
-    .adv-card--1::before, .adv-card--4::before {
-        background: none;
+    .adv-card--1::before, .adv-card--4::before, .adv-card--2::before, .adv-card--3::before {
+        display: none;
     }
 
 
     .adv-card--4 {
+        background-image: none;
+        padding-top: 24px;
+        border: 1px solid var(--color-line-border);
+    }
+
+    .adv-card--3 {
+        background-image: none;
+        padding-top: 24px;
+        border: 1px solid var(--color-line-border);
+        /*margin-left: 0;*/
+        margin-right: 0;
+    }
+
+    .adv-card--2 {
         background-image: none;
         padding-top: 24px;
         border: 1px solid var(--color-line-border);
@@ -3932,7 +3949,7 @@
     }
 
     .adv-card + .adv-card {
-        margin-left: -1px;
+        /*margin-left: -1px;*/
     }
 
     .adv-card h3 {
@@ -3953,6 +3970,22 @@
 
     .advantages-list .adv-card:nth-child(2n) {
         margin-top: 60px !important;
+    }
+
+    .adv-card--1 {
+        margin-right: 0;
+    }
+
+    .adv-card--2 {
+        margin-left: -1px;
+    }
+
+    .adv-card--3 {
+        margin-left: -1px;
+    }
+
+    .adv-card--4 {
+        margin-left: -0.8px;
     }
 
     /* TRUST */
