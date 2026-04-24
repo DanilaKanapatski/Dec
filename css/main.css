@@ -2817,45 +2817,6 @@
         background-size: 100% 100%;
     }
 
-    /* обычные карточки 2 и 3 */
-    /* ── @media (max-width: 1919px) ── */
-    .adv-card--2::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        /* убираем border-left — SVG карточки 1 рисует правый край */
-        border-left: 1px solid var(--color-line-border);
-        border-right: 1px solid var(--color-line-border);
-        border-top: 1px solid var(--color-line-border);
-        border-bottom: 1px solid var(--color-line-border);
-    }
-
-    .adv-card--3::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        border-left: 1px solid var(--color-line-border);
-        border-right: 1px solid var(--color-line-border);
-        border-top: 1px solid var(--color-line-border);
-        border-bottom: 1px solid var(--color-line-border);
-    }
-
-    /*!* правая внешняя линия только у 4 *!*/
-    /*.adv-card--4::after {*/
-    /*    content: "";*/
-    /*    position: absolute;*/
-    /*    top: 0;*/
-    /*    right: 0;*/
-    /*    width: 1px;*/
-    /*    height: 100%;*/
-    /*    background: var(--color-line-border);*/
-    /*    z-index: 1;*/
-    /*    pointer-events: none;*/
-    /*}*/
 
     .adv-card--1 {
         margin-top: 80px;
@@ -2868,8 +2829,7 @@
 
     .adv-card--3 {
         margin-top: 40px;
-        z-index: 4;
-        margin-right: -1px;
+
     }
 
     .adv-card--4 {
