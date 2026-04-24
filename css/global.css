@@ -370,6 +370,9 @@ body {
 .page-wrapper {
     width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* ТОЛЬКО от 1920 включаем фикс — zoom задаётся через JS (CSS calc не поддерживает деление vw/px) */
