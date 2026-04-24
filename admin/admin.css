@@ -668,3 +668,52 @@ body.admin-body--auth {
     width: 100%;
 }
 
+
+/* ============ RENDER COLS SELECTOR ============ */
+.render-cols-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.render-cols-label {
+    font-size: 13px;
+    color: #a0a0a0;
+    white-space: nowrap;
+}
+
+.render-cols-option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 10px;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    background: transparent;
+    color: #ccc;
+    transition: all .15s;
+}
+
+.render-cols-option input[type="radio"] {
+    display: none;
+}
+
+.render-cols-option.is-active,
+.render-cols-option:has(input:checked) {
+    border-color: #1D45C5;
+    background: rgba(29,69,197,.15);
+    color: #fff;
+}
+
+.render-card__controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    background: #1a1a1a;
+    border-top: 1px solid #2a2a2a;
+}

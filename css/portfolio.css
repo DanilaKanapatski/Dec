@@ -308,6 +308,8 @@
 .portfolio-block > img {
     /*width: 100%;*/
     /*aspect-ratio: 1.56 / 1;*/
+    min-width: 657px;
+    width: 100%;
     object-fit: cover;
     display: block;
     will-change: transform, opacity, clip-path;
@@ -317,6 +319,7 @@
 
 .portfolio-block__content {
     width: 100%;
+    min-width: 703px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -364,11 +367,11 @@
     letter-spacing: -0.02em;
     color: var(--color-main-white);
     border: 1px solid var(--color-line-tag);
-    padding: 0 12px;
+    padding: 4px 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 30px;
+    min-height: 30px;
 }
 
 .portfolio-block__info {
@@ -510,11 +513,11 @@
         letter-spacing: normal;
         color: var(--color-main-white);
         border: 1px solid var(--color-line-tag);
-        padding: 0 8px;
+        padding: 5px 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 26px;
+        min-height: 26px;
     }
 
     .portfolio-block__info {
@@ -551,7 +554,7 @@
     }
 }
 
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1200px) {
     .portfolio {
         margin-top: 56px;
         margin-bottom: 100px;
@@ -926,11 +929,11 @@
         letter-spacing: normal;
         color: var(--color-main-white);
         border: 1px solid var(--color-line-tag);
-        padding: 0 8px;
+        padding: 5px 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 26px;
+        min-height: 26px;
     }
 
     .portfolio-block__info {
@@ -1326,11 +1329,11 @@
         letter-spacing: normal;
         color: var(--color-main-white);
         border: 1px solid var(--color-line-tag);
-        padding: 0 8px;
+        padding: 5px 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 26px;
+        min-height: 26px;
     }
 
     .portfolio-block__info {

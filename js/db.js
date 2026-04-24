@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS projects (
     published_at TEXT DEFAULT '',
     about_text TEXT DEFAULT '',
     video_src TEXT DEFAULT '',
+    tour_src TEXT DEFAULT '',
+    presentation_src TEXT DEFAULT '',
     exterior_renders TEXT DEFAULT '[]',
     interior_renders TEXT DEFAULT '[]',
     next_project_id INTEGER DEFAULT 0,
@@ -66,6 +68,12 @@ if (!newsCols.includes('reading_time')) {
 const projCols = db.prepare("PRAGMA table_info(projects)").all().map(c => c.name);
 if (!projCols.includes('next_project_id')) {
     db.exec(`ALTER TABLE projects ADD COLUMN next_project_id INTEGER DEFAULT 0`);
+}
+if (!projCols.includes('tour_src')) {
+    db.exec(`ALTER TABLE projects ADD COLUMN tour_src TEXT DEFAULT ''`);
+}
+if (!projCols.includes('presentation_src')) {
+    db.exec(`ALTER TABLE projects ADD COLUMN presentation_src TEXT DEFAULT ''`);
 }
 
 // админ

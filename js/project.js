@@ -20,6 +20,11 @@ function isVideoUrl(url) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Компенсируем fixed header — отступ у <main>
+    const mainEl = document.querySelector('main');
+    const headerEl = document.querySelector('.header');
+    if (headerEl && mainEl) mainEl.style.paddingTop = headerEl.offsetHeight + 'px';
+
     loadProject();
 });
 
@@ -52,6 +57,8 @@ async function loadProject() {
     document.getElementById('project-breadcrumb').textContent = item.title;
     document.getElementById('project-title').textContent = item.title;
 
+    // Мета под заголовком не отображается (по дизайну — только title → photo)
+
     const coverEl = document.getElementById('project-cover');
     if (item.cover_image) {
         coverEl.src = item.cover_image;
@@ -68,16 +75,49 @@ async function loadProject() {
         document.getElementById('project-about').hidden = true;
     }
 
-    // === 3D-ролик ===
+    // === 3D-ТУР ===
+    const hasTour = item.tour_src && item.tour_src.trim();
+    if (hasTour) {
+        const tourMediaEl = document.getElementById('project-tour-media');
+        if (tourMediaEl) {
+            if (isVideoUrl(item.tour_src)) {
+                tourMediaEl.innerHTML = `<video src="${escAttr(item.tour_src)}" controls muted playsinline class="project-media--full"></video>`;
+            } else if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(item.tour_src)) {
+                tourMediaEl.innerHTML = `<img src="${escAttr(item.tour_src)}" alt="3D-тур ${escAttr(item.title)}" class="project-media--full">`;
+            } else {
+                // external link
+                tourMediaEl.innerHTML = `<a class="project-service-link" href="${escAttr(item.tour_src)}" target="_blank" rel="noopener">Открыть 3D-тур →</a>`;
+            }
+        }
+        document.getElementById('project-tour').hidden = false;
+    }
+
+    // === 3D-РОЛИК ===
     const hasVideo = item.video_src && item.video_src.trim();
     if (hasVideo) {
         const mediaEl = document.getElementById('project-3d-media');
         if (isVideoUrl(item.video_src)) {
             mediaEl.innerHTML = `<video src="${escAttr(item.video_src)}" controls muted playsinline style="width: 100%; height: auto; display: block;"></video>`;
         } else {
-            mediaEl.innerHTML = `<img src="${escAttr(item.video_src)}" alt="3D ролик ${escAttr(item.title)}">`;
+            mediaEl.innerHTML = `<img src="${escAttr(item.video_src)}" alt="3D-ролик ${escAttr(item.title)}">`;
         }
         document.getElementById('project-3d').hidden = false;
+    }
+
+    // === ПРЕЗЕНТАЦИИ ===
+    const hasPresentation = item.presentation_src && item.presentation_src.trim();
+    if (hasPresentation) {
+        const presMediaEl = document.getElementById('project-presentation-media');
+        if (presMediaEl) {
+            if (isVideoUrl(item.presentation_src)) {
+                presMediaEl.innerHTML = `<video src="${escAttr(item.presentation_src)}" controls muted playsinline class="project-media--full"></video>`;
+            } else if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(item.presentation_src)) {
+                presMediaEl.innerHTML = `<img src="${escAttr(item.presentation_src)}" alt="Презентация ${escAttr(item.title)}" class="project-media--full">`;
+            } else {
+                presMediaEl.innerHTML = `<a class="project-service-link" href="${escAttr(item.presentation_src)}" target="_blank" rel="noopener">Открыть презентацию →</a>`;
+            }
+        }
+        document.getElementById('project-presentation').hidden = false;
     }
 
     // === Рендеры экстерьера ===
@@ -85,11 +125,15 @@ async function loadProject() {
     try { exteriorRenders = JSON.parse(item.exterior_renders || '[]'); } catch (e) {}
     if (Array.isArray(exteriorRenders) && exteriorRenders.length) {
         const grid = document.getElementById('exterior-grid');
-        grid.innerHTML = exteriorRenders.map((r, i) => `
-            <button class="render-item ${r.wide ? 'render-item--wide' : 'render-item--small'}" type="button">
+        grid.innerHTML = exteriorRenders.map((r, i) => {
+            const colClass = r.cols === 'full' ? 'render-item--full'
+                : r.wide ? 'render-item--full'
+                : r.cols === '3' ? 'render-item--third'
+                : 'render-item--half';
+            return `<button class="render-item ${colClass}" type="button">
                 <img src="${escAttr(r.src)}" alt="Рендер экстерьера ${i + 1}">
-            </button>
-        `).join('');
+            </button>`;
+        }).join('');
         document.getElementById('project-exterior').hidden = false;
     }
 
@@ -98,18 +142,24 @@ async function loadProject() {
     try { interiorRenders = JSON.parse(item.interior_renders || '[]'); } catch (e) {}
     if (Array.isArray(interiorRenders) && interiorRenders.length) {
         const grid = document.getElementById('interior-grid');
-        grid.innerHTML = interiorRenders.map((r, i) => `
-            <button class="render-item ${r.wide ? 'render-item--wide' : 'render-item--small'}" type="button">
+        grid.innerHTML = interiorRenders.map((r, i) => {
+            const colClass = r.cols === 'full' ? 'render-item--full'
+                : r.wide ? 'render-item--full'
+                : r.cols === '3' ? 'render-item--third'
+                : 'render-item--half';
+            return `<button class="render-item ${colClass}" type="button">
                 <img src="${escAttr(r.src)}" alt="Рендер интерьера ${i + 1}">
-            </button>
-        `).join('');
+            </button>`;
+        }).join('');
         document.getElementById('project-interior').hidden = false;
     }
 
     // === Якорная навигация (только существующие секции) ===
     const navEl = document.getElementById('projectSectionsNav');
     const navItems = [];
-    if (hasVideo) navItems.push({ href: '#project-3d', anchor: '3d', text: '3D-ТУР' });
+    if (hasTour) navItems.push({ href: '#project-tour', anchor: 'tour', text: '3D-ТУР' });
+    if (hasVideo) navItems.push({ href: '#project-3d', anchor: 'video', text: '3D-РОЛИК' });
+    if (hasPresentation) navItems.push({ href: '#project-presentation', anchor: 'presentation', text: 'ПРЕЗЕНТАЦИИ' });
     if (exteriorRenders.length) navItems.push({ href: '#project-exterior', anchor: 'exterior', text: 'ЭКСТЕРЬЕР' });
     if (interiorRenders.length) navItems.push({ href: '#project-interior', anchor: 'interior', text: 'ИНТЕРЬЕР' });
 
@@ -195,29 +245,69 @@ function initProjectGallery() {
 
     if (!gallery || !galleryImage || !closeBtn || !prevBtn || !nextBtn || !backdrop || !imageWrap) return;
 
-    const renderImages = Array.from(document.querySelectorAll('.renders-grid .render-item img'));
-    if (!renderImages.length) return;
+    const grids = Array.from(document.querySelectorAll('.renders-grid'));
+    if (!grids.length) return;
 
+    let currentImages = [];   // images of the currently open grid only
     let currentIndex = 0;
+    let isAnimating = false;
     let touchStartY = 0;
     let touchEndY = 0;
 
     function updateArrows() {
         prevBtn.classList.toggle('is-hidden', currentIndex === 0);
-        nextBtn.classList.toggle('is-hidden', currentIndex === renderImages.length - 1);
+        nextBtn.classList.toggle('is-hidden', currentIndex === currentImages.length - 1);
     }
 
-    function updateImage() {
-        const current = renderImages[currentIndex];
-        if (!current) return;
-        galleryImage.src = current.src;
-        galleryImage.alt = current.alt || '';
-        updateArrows();
+    // Vertical slide: direction 'next' = slide up (new comes from bottom), 'prev' = slide down
+    function animateTo(newIndex, direction) {
+        if (isAnimating || !currentImages[newIndex]) return;
+        isAnimating = true;
+
+        const slideOut = direction === 'next' ? '-100%' : '100%';
+        const slideIn  = direction === 'next' ? '100%'  : '-100%';
+
+        const nextImg = new Image();
+        nextImg.src = currentImages[newIndex].src;
+        nextImg.alt = currentImages[newIndex].alt || '';
+        nextImg.style.cssText = `
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            transform: translateY(${slideIn});
+            transition: none;
+        `;
+        imageWrap.appendChild(nextImg);
+
+        // force reflow
+        nextImg.getBoundingClientRect();
+
+        const ease = 'cubic-bezier(.4,0,.2,1)';
+        galleryImage.style.transition = `transform 0.35s ${ease}`;
+        nextImg.style.transition      = `transform 0.35s ${ease}`;
+        galleryImage.style.transform  = `translateY(${slideOut})`;
+        nextImg.style.transform       = 'translateY(0)';
+
+        nextImg.addEventListener('transitionend', () => {
+            galleryImage.src = nextImg.src;
+            galleryImage.alt = nextImg.alt;
+            galleryImage.style.transition = 'none';
+            galleryImage.style.transform  = 'translateY(0)';
+            nextImg.remove();
+            currentIndex = newIndex;
+            updateArrows();
+            isAnimating = false;
+        }, { once: true });
     }
 
-    function openGallery(index) {
+    function openGallery(images, index) {
+        currentImages = images;
         currentIndex = index;
-        updateImage();
+        galleryImage.style.transition = 'none';
+        galleryImage.style.transform  = 'translateY(0)';
+        galleryImage.src = currentImages[currentIndex].src;
+        galleryImage.alt = currentImages[currentIndex].alt || '';
+        updateArrows();
         gallery.classList.add('is-open');
         gallery.setAttribute('aria-hidden', 'false');
         document.documentElement.classList.add('gallery-open');
@@ -232,28 +322,23 @@ function initProjectGallery() {
     }
 
     function showPrev() {
-        if (currentIndex === 0) return;
-        currentIndex -= 1;
-        updateImage();
+        if (currentIndex === 0 || isAnimating) return;
+        animateTo(currentIndex - 1, 'prev');
     }
 
     function showNext() {
-        if (currentIndex === renderImages.length - 1) return;
-        currentIndex += 1;
-        updateImage();
+        if (currentIndex === currentImages.length - 1 || isAnimating) return;
+        animateTo(currentIndex + 1, 'next');
     }
 
-    function handleSwipe() {
-        const diffY = touchEndY - touchStartY;
-        if (Math.abs(diffY) < 50) return;
-        if (diffY > 0) showPrev();
-        else showNext();
-    }
-
-    renderImages.forEach((img, index) => {
-        const trigger = img.closest('.render-item');
-        if (!trigger) return;
-        trigger.addEventListener('click', () => openGallery(index));
+    // Bind per-grid — each grid opens only its own images
+    grids.forEach(grid => {
+        const imgs = Array.from(grid.querySelectorAll('.render-item img'));
+        imgs.forEach((img, index) => {
+            const trigger = img.closest('.render-item');
+            if (!trigger) return;
+            trigger.addEventListener('click', () => openGallery(imgs, index));
+        });
     });
 
     closeBtn.addEventListener('click', closeGallery);
@@ -267,13 +352,16 @@ function initProjectGallery() {
 
     imageWrap.addEventListener('touchend', (e) => {
         touchEndY = e.changedTouches[0].clientY;
-        handleSwipe();
+        const diff = touchStartY - touchEndY;
+        if (Math.abs(diff) < 50) return;
+        if (diff > 0) showNext();
+        else showPrev();
     }, { passive: true });
 
     document.addEventListener('keydown', (e) => {
         if (!gallery.classList.contains('is-open')) return;
         if (e.key === 'Escape') closeGallery();
-        if (e.key === 'ArrowUp') showPrev();
+        if (e.key === 'ArrowUp')   showPrev();
         if (e.key === 'ArrowDown') showNext();
     });
 }

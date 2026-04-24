@@ -127,11 +127,30 @@
             <textarea id="about_text" rows="8" placeholder="Описание проекта. Поддерживаются переносы строк."></textarea>
         </div>
 
+        <!-- 3D ТУР -->
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>3D-ТУР (опционально)</h2>
+                <p class="admin-muted">Можно загрузить видео (mp4), изображение или вставить внешнюю ссылку. Если заполнен — появится якорь «3D-ТУР».</p>
+            </div>
+            <div class="video-uploader">
+                <div class="video-preview" id="tourPreview">
+                    <span class="video-preview__empty">Файл не загружен</span>
+                </div>
+                <div class="video-uploader__controls">
+                    <input type="file" id="tourFile" accept="video/*,image/*" hidden>
+                    <button type="button" class="admin-button ghost" onclick="document.getElementById('tourFile').click()">Загрузить видео/картинку</button>
+                    <button type="button" class="admin-button ghost" id="tourClear">Убрать</button>
+                    <input type="text" id="tour_src" placeholder="или вставь ссылку / путь к файлу">
+                </div>
+            </div>
+        </div>
+
         <!-- 3D РОЛИК -->
         <div class="blocks-section">
             <div class="blocks-section__head">
-                <h2>3D-ролик (опционально)</h2>
-                <p class="admin-muted">Если заполнен, на странице проекта появится якорь «3D-ТУР» и секция с роликом. Можно загрузить видео (mp4) или изображение-превью.</p>
+                <h2>3D-РОЛИК (опционально)</h2>
+                <p class="admin-muted">Можно загрузить видео (mp4) или изображение-превью. Если заполнен — появится якорь «3D-РОЛИК».</p>
             </div>
 
             <div class="video-uploader">
@@ -143,6 +162,25 @@
                     <button type="button" class="admin-button ghost" onclick="document.getElementById('videoFile').click()">Загрузить видео/картинку</button>
                     <button type="button" class="admin-button ghost" id="videoClear">Убрать</button>
                     <input type="text" id="video_src" placeholder="или путь к файлу">
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРЕЗЕНТАЦИИ -->
+        <div class="blocks-section">
+            <div class="blocks-section__head">
+                <h2>ПРЕЗЕНТАЦИИ (опционально)</h2>
+                <p class="admin-muted">Можно загрузить видео (mp4), изображение или вставить внешнюю ссылку. Если заполнено — появится якорь «ПРЕЗЕНТАЦИИ».</p>
+            </div>
+            <div class="video-uploader">
+                <div class="video-preview" id="presentationPreview">
+                    <span class="video-preview__empty">Файл не загружен</span>
+                </div>
+                <div class="video-uploader__controls">
+                    <input type="file" id="presentationFile" accept="video/*,image/*" hidden>
+                    <button type="button" class="admin-button ghost" onclick="document.getElementById('presentationFile').click()">Загрузить видео/картинку</button>
+                    <button type="button" class="admin-button ghost" id="presentationClear">Убрать</button>
+                    <input type="text" id="presentation_src" placeholder="или вставь ссылку / путь к файлу">
                 </div>
             </div>
         </div>
@@ -305,6 +343,52 @@
         renderVideo('');
     });
 
+    /* ============ 3D ТУР (видео или картинка или ссылка) ============ */
+    const tourPreview = document.getElementById('tourPreview');
+    const tourInput = document.getElementById('tour_src');
+    const tourFile = document.getElementById('tourFile');
+
+    function renderTour(src) {
+        if (!src) { tourPreview.innerHTML = '<span class="video-preview__empty">Файл не загружен</span>'; return; }
+        const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
+        const isExternal = /^https?:\/\//i.test(src);
+        if (isVideo) tourPreview.innerHTML = `<video src="${escAttr(src)}" controls muted></video>`;
+        else if (isExternal) tourPreview.innerHTML = `<a href="${escAttr(src)}" target="_blank" style="color:#1D45C5;word-break:break-all">${escAttr(src)}</a>`;
+        else tourPreview.innerHTML = `<img src="${escAttr(src)}" alt="">`;
+    }
+
+    tourFile.addEventListener('change', async () => {
+        const file = tourFile.files[0];
+        if (!file) return;
+        const result = await uploadMedia(file);
+        if (result && result.url) { tourInput.value = result.url; renderTour(result.url); }
+    });
+    tourInput.addEventListener('input', () => renderTour(tourInput.value));
+    document.getElementById('tourClear').addEventListener('click', () => { tourInput.value = ''; renderTour(''); });
+
+    /* ============ ПРЕЗЕНТАЦИИ (видео или картинка или ссылка) ============ */
+    const presentationPreview = document.getElementById('presentationPreview');
+    const presentationInput = document.getElementById('presentation_src');
+    const presentationFile = document.getElementById('presentationFile');
+
+    function renderPresentation(src) {
+        if (!src) { presentationPreview.innerHTML = '<span class="video-preview__empty">Файл не загружен</span>'; return; }
+        const isVideo = /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
+        const isExternal = /^https?:\/\//i.test(src);
+        if (isVideo) presentationPreview.innerHTML = `<video src="${escAttr(src)}" controls muted></video>`;
+        else if (isExternal) presentationPreview.innerHTML = `<a href="${escAttr(src)}" target="_blank" style="color:#1D45C5;word-break:break-all">${escAttr(src)}</a>`;
+        else presentationPreview.innerHTML = `<img src="${escAttr(src)}" alt="">`;
+    }
+
+    presentationFile.addEventListener('change', async () => {
+        const file = presentationFile.files[0];
+        if (!file) return;
+        const result = await uploadMedia(file);
+        if (result && result.url) { presentationInput.value = result.url; renderPresentation(result.url); }
+    });
+    presentationInput.addEventListener('input', () => renderPresentation(presentationInput.value));
+    document.getElementById('presentationClear').addEventListener('click', () => { presentationInput.value = ''; renderPresentation(''); });
+
     /* ============ РЕНДЕРЫ (экстерьера / интерьера) ============ */
     // Стейт рендеров
     let exteriorRenders = []; // [{src, wide}]
@@ -316,16 +400,26 @@
             return;
         }
 
-        listEl.innerHTML = items.map((it, i) => `
-            <div class="render-card ${it.wide ? 'is-wide' : ''}" data-i="${i}">
+        listEl.innerHTML = items.map((it, i) => {
+            const cols = it.cols || '2';
+            return `
+            <div class="render-card" data-i="${i}">
                 <div class="render-card__preview">
                     <img src="${escAttr(it.src)}" alt="">
                 </div>
                 <div class="render-card__controls">
-                    <label class="render-wide-toggle">
-                        <input type="checkbox" class="render-wide" ${it.wide ? 'checked' : ''}>
-                        <span>На всю ширину</span>
-                    </label>
+                    <div class="render-cols-select">
+                        <span class="render-cols-label">В строке:</span>
+                        <label class="render-cols-option ${cols === '2' ? 'is-active' : ''}">
+                            <input type="radio" name="cols-${i}" value="2" ${cols === '2' ? 'checked' : ''}> 2
+                        </label>
+                        <label class="render-cols-option ${cols === '3' ? 'is-active' : ''}">
+                            <input type="radio" name="cols-${i}" value="3" ${cols === '3' ? 'checked' : ''}> 3
+                        </label>
+                        <label class="render-cols-option ${cols === 'full' ? 'is-active' : ''}">
+                            <input type="radio" name="cols-${i}" value="full" ${cols === 'full' ? 'checked' : ''}> На всю ширину
+                        </label>
+                    </div>
                     <div class="render-order">
                         <button type="button" class="block__btn render-up" ${i === 0 ? 'disabled' : ''}>↑</button>
                         <button type="button" class="block__btn render-down" ${i === items.length - 1 ? 'disabled' : ''}>↓</button>
@@ -333,13 +427,17 @@
                     </div>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
 
         listEl.querySelectorAll('.render-card').forEach(card => {
             const i = +card.dataset.i;
-            card.querySelector('.render-wide').addEventListener('change', e => {
-                items[i].wide = e.target.checked;
-                onChange();
+            card.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', e => {
+                    items[i].cols = e.target.value;
+                    // update active label
+                    card.querySelectorAll('.render-cols-option').forEach(l => l.classList.remove('is-active'));
+                    e.target.closest('.render-cols-option').classList.add('is-active');
+                });
             });
             card.querySelector('.render-up').addEventListener('click', () => {
                 if (i === 0) return;
@@ -370,7 +468,7 @@
         if (!files.length) return;
         const urls = await uploadMany(files);
         if (urls) {
-            exteriorRenders.push(...urls.map(src => ({ src, wide: false })));
+            exteriorRenders.push(...urls.map(src => ({ src, cols: '2' })));
             refreshExterior();
         }
         e.target.value = '';
@@ -381,7 +479,7 @@
         if (!files.length) return;
         const urls = await uploadMany(files);
         if (urls) {
-            interiorRenders.push(...urls.map(src => ({ src, wide: false })));
+            interiorRenders.push(...urls.map(src => ({ src, cols: '2' })));
             refreshInterior();
         }
         e.target.value = '';
@@ -440,6 +538,11 @@
         videoInput.value = item.video_src || '';
         renderVideo(item.video_src || '');
 
+        tourInput.value = item.tour_src || '';
+        renderTour(item.tour_src || '');
+        presentationInput.value = item.presentation_src || '';
+        renderPresentation(item.presentation_src || '');
+
         try {
             const services = JSON.parse(item.services || '[]');
             renderServicesCheckboxes(services);
@@ -447,12 +550,18 @@
 
         try {
             const ext = JSON.parse(item.exterior_renders || '[]');
-            exteriorRenders = Array.isArray(ext) ? ext : [];
+            exteriorRenders = Array.isArray(ext) ? ext.map(r => ({
+                src: r.src,
+                cols: r.cols || (r.wide ? 'full' : '2')
+            })) : [];
         } catch (e) { exteriorRenders = []; }
 
         try {
             const int = JSON.parse(item.interior_renders || '[]');
-            interiorRenders = Array.isArray(int) ? int : [];
+            interiorRenders = Array.isArray(int) ? int.map(r => ({
+                src: r.src,
+                cols: r.cols || (r.wide ? 'full' : '2')
+            })) : [];
         } catch (e) { interiorRenders = []; }
 
         refreshExterior();
@@ -477,6 +586,8 @@
             next_project_id: document.getElementById('next_project_id').value,
             about_text: document.getElementById('about_text').value,
             video_src: videoInput.value.trim(),
+            tour_src: document.getElementById('tour_src').value.trim(),
+            presentation_src: document.getElementById('presentation_src').value.trim(),
             exterior_renders: exteriorRenders,
             interior_renders: interiorRenders
         };

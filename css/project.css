@@ -21,6 +21,47 @@
     color: var(--color-main-white);
 }
 
+.project-hero__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.project-hero__meta span {
+    font-size: 15px;
+    color: var(--color-text-secondary, #a8a8a8);
+    line-height: 1.4;
+}
+
+.project-hero__meta .meta-sep {
+    color: var(--color-text-secondary, #a8a8a8);
+    opacity: 0.5;
+}
+
+/* Service links (3D-тур, презентация) */
+.project-service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border: 1px solid var(--color-main-decard, #1D45C5);
+    color: var(--color-main-white);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 16px;
+    transition: background .2s, color .2s;
+}
+
+.project-service-link:hover {
+    background: var(--color-main-decard, #1D45C5);
+    color: #fff;
+}
+
 .project-hero__image-wrap {
     position: relative;
     flex: 1 1 auto;
@@ -110,16 +151,51 @@
     color: var(--color-main-white);
 }
 
-.project-3d img {
-    width: 100%;
+.project-3d,
+.project-tour,
+.project-presentation {
+    /* break out of container to full viewport width */
+}
+
+.project-3d .project-media--full,
+.project-tour .project-media--full,
+.project-presentation .project-media--full {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
     display: block;
+    max-height: 80vh;
+    object-fit: contain;
+    background: #000;
+}
+
+.project-3d video,
+.project-tour video,
+.project-presentation video {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    display: block;
+    max-height: 80vh;
+    background: #000;
+}
+
+.project-3d img.project-media--full,
+.project-tour img.project-media--full,
+.project-presentation img.project-media--full {
+    max-height: none;
+    object-fit: cover;
+}
+
+/* Fallback for video set directly (not via class) */
+.project-3d video {
+    height: auto;
 }
 
 /* RENDERS */
 
 .renders-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
 }
 
@@ -129,6 +205,7 @@
     background: transparent;
     cursor: pointer;
     display: block;
+    grid-column: span 3; /* default: 2 per row */
 }
 
 .render-item img {
@@ -138,8 +215,25 @@
     object-fit: cover;
 }
 
-.render-item--wide {
-    grid-column: 1 / -1;
+/* full width */
+.render-item--wide,
+.render-item--full {
+    grid-column: span 6;
+}
+
+/* 2 per row (default) */
+.render-item--half {
+    grid-column: span 3;
+}
+
+/* 3 per row */
+.render-item--third {
+    grid-column: span 2;
+}
+
+/* keep old --small as alias for half */
+.render-item--small {
+    grid-column: span 3;
 }
 
 /* NEXT PROJECT */
@@ -219,10 +313,10 @@
 }
 
 .project-gallery__image-wrap {
+    position: relative;
+    width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
 }
 
 .project-gallery__image {

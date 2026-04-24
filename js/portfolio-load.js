@@ -4,6 +4,11 @@
   Обменивается состоянием через window.__portfolioFilters.
 */
 (() => {
+    // Компенсируем fixed header — отступ у <main>
+    const mainEl = document.querySelector('main');
+    const headerEl = document.querySelector('.header');
+    if (headerEl && mainEl) mainEl.style.paddingTop = headerEl.offsetHeight + 'px';
+
     const list = document.getElementById('portfolio-list');
     const trigger = document.getElementById('portfolio-load-trigger');
     const loader = document.getElementById('portfolio-loader');
@@ -29,9 +34,8 @@
         try { services = JSON.parse(item.services || '[]'); } catch (e) {}
 
         const tagsHtml = services.map(tag => `<span>${esc(tag)}</span>`).join('');
-        const dateText = item.published_at
-            ? formatDate(item.published_at)
-            : (item.year ? String(item.year) : '');
+        // В карточке — только полная дата из календаря. Год только в фильтрах.
+        const dateText = item.published_at ? formatDate(item.published_at) : '';
 
         const url = `project.html?slug=${encodeURIComponent(item.slug)}`;
 
@@ -186,6 +190,71 @@
         }
 
         applyFilters();
+        populateDynamicFilters(allProjects);
+    }
+
+    // Динамически заполняем фильтры по городу и году из данных проектов
+    function populateDynamicFilters(projects) {
+        // Города
+        const cityMenuEl = document.querySelector('.filter-select[data-filter="city"] .filter-select__menu');
+        if (cityMenuEl) {
+            const cities = [...new Set(projects.map(p => p.city).filter(Boolean))].sort();
+            // Оставляем только "Все", затем добавляем уникальные города
+            const allBtn = cityMenuEl.querySelector('[data-value="Все"]');
+            cityMenuEl.innerHTML = '';
+            if (allBtn) cityMenuEl.appendChild(allBtn);
+            cities.forEach(city => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'filter-select__option';
+                btn.dataset.value = city;
+                btn.textContent = city;
+                btn.addEventListener('click', () => {
+                    cityMenuEl.querySelectorAll('.filter-select__option').forEach(o => o.classList.remove('is-active'));
+                    btn.classList.add('is-active');
+                    const valueEl = document.querySelector('.filter-select[data-filter="city"] .filter-select__value');
+                    if (valueEl) valueEl.textContent = city;
+                    document.querySelector('.filter-select[data-filter="city"]').classList.remove('is-open');
+                    document.querySelector('.filter-select[data-filter="city"]').classList.add('is-filled');
+                    window.__portfolioFilters.city = city;
+                    if (typeof window.__applyPortfolioFilters === 'function') window.__applyPortfolioFilters();
+                });
+                cityMenuEl.appendChild(btn);
+            });
+            // Восстанавливаем обработчик "Все"
+            if (allBtn) {
+                allBtn.addEventListener('click', () => {
+                    cityMenuEl.querySelectorAll('.filter-select__option').forEach(o => o.classList.remove('is-active'));
+                    allBtn.classList.add('is-active');
+                    const valueEl = document.querySelector('.filter-select[data-filter="city"] .filter-select__value');
+                    if (valueEl) valueEl.textContent = 'Все';
+                    document.querySelector('.filter-select[data-filter="city"]').classList.remove('is-open', 'is-filled');
+                    window.__portfolioFilters.city = 'Все';
+                    if (typeof window.__applyPortfolioFilters === 'function') window.__applyPortfolioFilters();
+                });
+            }
+        }
+
+        // Годы (теги)
+        const yearTagsEl = document.querySelector('.filter-tags[data-filter-group="year"]');
+        if (yearTagsEl) {
+            const years = [...new Set(projects.map(p => p.year).filter(y => y && parseInt(y)))].map(String).sort().reverse();
+            yearTagsEl.innerHTML = '';
+            years.forEach(year => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'filter-tag';
+                btn.dataset.value = year;
+                btn.textContent = year;
+                btn.addEventListener('click', () => {
+                    btn.classList.toggle('is-active');
+                    const f = window.__portfolioFilters;
+                    f.years = [...yearTagsEl.querySelectorAll('.filter-tag.is-active')].map(b => b.dataset.value);
+                    if (typeof window.__applyPortfolioFilters === 'function') window.__applyPortfolioFilters();
+                });
+                yearTagsEl.appendChild(btn);
+            });
+        }
     }
 
     load();
