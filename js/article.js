@@ -1,4 +1,11 @@
 (() => {
+    // Компенсируем fixed header — отступ у <main>
+    document.addEventListener('DOMContentLoaded', () => {
+        const headerEl = document.querySelector('.header');
+        const mainEl = document.querySelector('main');
+        if (headerEl && mainEl) mainEl.style.paddingTop = headerEl.offsetHeight + 'px';
+    });
+
     const wrapperEl = document.getElementById('article-wrapper');
     const breadcrumbEl = document.getElementById('article-breadcrumb');
 
@@ -59,7 +66,6 @@
                 const slides = imgs.map(src =>
                     `<div class="swiper-slide"><img src="${escAttr(src)}" alt=""></div>`
                 ).join('');
-                // уникальный индекс для изоляции нескольких слайдеров на странице
                 return `
                 <div class="article-slider" data-slider-index="${index}">
                     <div class="slider-wrapper">
@@ -82,6 +88,17 @@
                 </div>`;
             }
 
+            case 'group': {
+                const children = (block.children || []);
+                if (!children.length) return '';
+                const inner = children
+                    .map((ch, ci) => renderBlock(ch, `${index}-${ci}`))
+                    .filter(Boolean)
+                    .join('');
+                if (!inner) return '';
+                return `<div class="article-group">${inner}</div>`;
+            }
+
             default:
                 return '';
         }
@@ -93,18 +110,52 @@
             const prevEl = wrapper.querySelector('.slider-prev');
             const nextEl = wrapper.querySelector('.slider-next');
 
-            // Swiper может быть уже инициализирован — защита
-            if (swiperEl.swiper) return;
+            if (!swiperEl || swiperEl.swiper) return;
+
+            const count = swiperEl.querySelectorAll('.swiper-slide').length;
+
+            wrapper.classList.add(`article-slider--count-${count}`);
+
+            // 1 фото — без Swiper, просто по центру
+            if (count === 1) {
+                if (prevEl) prevEl.style.display = 'none';
+                if (nextEl) nextEl.style.display = 'none';
+                return;
+            }
 
             new Swiper(swiperEl, {
-                loop: true,
+                // loop только для 4+
+                loop: count >= 4,
+
+                // desktop логика
                 slidesPerView: 'auto',
                 centeredSlides: true,
+
+                // 2 фото → первая по центру, вторая справа
+                // 3 фото → вторая по центру
+                initialSlide: count === 3 ? 1 : 0,
+
                 spaceBetween: 20,
-                navigation: { nextEl: nextEl, prevEl: prevEl },
+
+                navigation: {
+                    nextEl,
+                    prevEl
+                },
+
                 breakpoints: {
-                    0: { slidesPerView: 1, centeredSlides: false, spaceBetween: 20 },
-                    1100: { slidesPerView: 'auto', centeredSlides: true, spaceBetween: 20 }
+                    // mobile
+                    0: {
+                        slidesPerView: 1,
+                        centeredSlides: false,
+                        spaceBetween: 0
+                    },
+
+                    // desktop
+                    1100: {
+                        slidesPerView: 'auto',
+                        centeredSlides: true,
+                        spaceBetween: 20
+                    }
                 }
             });
         });

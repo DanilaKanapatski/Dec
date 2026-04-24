@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="shortcut icon" href="/favicon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактор статьи</title>
     <link rel="stylesheet" href="/admin/admin.css">
@@ -12,6 +14,7 @@
     <nav>
         <a href="/admin/index.html">Главная</a>
         <a href="/admin/news.html">Новости / статьи</a>
+        <a href="/admin/categories.html">Категории</a>
         <a href="/admin/projects.html">Проекты / портфолио</a>
         <a href="/admin/logout">Выйти</a>
     </nav>
@@ -37,12 +40,11 @@
 
             <label class="field">
                 <span class="field__label">Категория *</span>
-                <select id="category">
-                    <option value="Мероприятия">Мероприятия</option>
-                    <option value="Статьи">Статьи</option>
-                    <option value="Работы">Работы</option>
-                    <option value="Культура компании">Культура компании</option>
-                </select>
+                <div class="category-combo">
+                    <input type="text" id="category" list="category-list"
+                           placeholder="Введите или выберите категорию" autocomplete="off">
+                    <datalist id="category-list"></datalist>
+                </div>
             </label>
 
             <label class="field">
@@ -58,8 +60,8 @@
             <label class="field">
                 <span class="field__label">Статус</span>
                 <select id="status">
-                    <option value="draft">Черновик</option>
                     <option value="published">Опубликовано</option>
+                    <option value="draft">Черновик</option>
                 </select>
             </label>
 
@@ -93,6 +95,7 @@
             <div id="blocks" class="blocks"></div>
 
             <div class="blocks-toolbar">
+                <button type="button" class="block-add" data-type="group">+ Группа блоков</button>
                 <button type="button" class="block-add" data-type="heading">+ Заголовок</button>
                 <button type="button" class="block-add" data-type="subheading">+ Подзаголовок</button>
                 <button type="button" class="block-add" data-type="text">+ Текст</button>
@@ -118,7 +121,8 @@ let blockIdCounter = 0;
 
 function uid() { return 'b' + (++blockIdCounter); }
 
-function addBlock(type, data = {}) {
+function addBlock(type, data = {}, targetArr) {
+    const arr = targetArr || blocks;
     const block = { id: uid(), type, ...data };
     if (type === 'heading' && block.text === undefined) block.text = '';
     if (type === 'subheading' && block.text === undefined) block.text = '';
@@ -126,7 +130,8 @@ function addBlock(type, data = {}) {
     if (type === 'list' && !Array.isArray(block.items)) block.items = [''];
     if (type === 'image' && block.src === undefined) block.src = '';
     if (type === 'slider' && !Array.isArray(block.images)) block.images = [];
-    blocks.push(block);
+    if (type === 'group' && !Array.isArray(block.children)) block.children = [];
+    arr.push(block);
     render();
 }
 
@@ -195,7 +200,8 @@ function typeLabel(type) {
         text: 'Текст',
         list: 'Список',
         image: 'Изображение',
-        slider: 'Слайдер'
+        slider: 'Слайдер',
+        group: 'Группа блоков'
     }[type] || type;
 }
 
@@ -247,9 +253,53 @@ function bodyHtml(b) {
                     </div>
                 </div>
             `;
+        case 'group':
+            return `
+                <div class="group-block">
+                    <p class="group-hint">Блоки внутри группы отображаются единым блоком без разрыва (отступ 40px только между группами)</p>
+                    <div class="group-children" data-id="${b.id}">
+                        ${b.children.map((ch, ci) => groupChildHtml(ch, ci, b.children.length)).join('')}
+                    </div>
+                    <div class="group-toolbar">
+                        <button type="button" class="admin-button ghost admin-button--small group-add" data-type="heading">+ Заголовок</button>
+                        <button type="button" class="admin-button ghost admin-button--small group-add" data-type="subheading">+ Подзаголовок</button>
+                        <button type="button" class="admin-button ghost admin-button--small group-add" data-type="text">+ Текст</button>
+                        <button type="button" class="admin-button ghost admin-button--small group-add" data-type="list">+ Список</button>
+                    </div>
+                </div>
+            `;
         default:
             return '';
     }
+}
+
+function groupChildHtml(ch, ci, total) {
+    const typeNames = { heading:'Заголовок', subheading:'Подзаголовок', text:'Текст', list:'Список' };
+    let innerHtml = '';
+    if (ch.type === 'heading' || ch.type === 'subheading') {
+        innerHtml = `<input type="text" class="block-input block-input--${ch.type === 'heading' ? 'h' : 'sub'} gchild-text" placeholder="${ch.type === 'heading' ? 'Заголовок' : 'Подзаголовок'}" value="${escAttr(ch.text || '')}">`;
+    } else if (ch.type === 'text') {
+        innerHtml = `<textarea class="block-input block-input--text gchild-text" placeholder="Текст">${escText(ch.text || '')}</textarea>`;
+    } else if (ch.type === 'list') {
+        innerHtml = `<div class="list-items">
+            ${(ch.items || []).map((it, ii) => `<div class="list-row">
+                <input type="text" class="block-input list-input gchild-list-item" data-i="${ii}" placeholder="Пункт" value="${escAttr(it)}">
+                <button type="button" class="block__btn gchild-list-del" data-i="${ii}">✕</button>
+            </div>`).join('')}
+        </div>
+        <button type="button" class="admin-button ghost admin-button--small gchild-list-add">+ Добавить пункт</button>`;
+    }
+    return `<div class="group-child block--${ch.type}" data-ci="${ci}">
+        <div class="block__head">
+            <span class="block__type">${typeNames[ch.type] || ch.type}</span>
+            <div class="block__actions">
+                <button type="button" class="block__btn gchild-up" ${ci === 0 ? 'disabled' : ''}>↑</button>
+                <button type="button" class="block__btn gchild-down" ${ci === total - 1 ? 'disabled' : ''}>↓</button>
+                <button type="button" class="block__btn block__btn--del gchild-del">✕</button>
+            </div>
+        </div>
+        <div class="block__body">${innerHtml}</div>
+    </div>`;
 }
 
 function bindBlockBody(wrap, b) {
@@ -327,6 +377,55 @@ function bindBlockBody(wrap, b) {
             });
             break;
         }
+        case 'group': {
+            // добавление дочернего блока
+            wrap.querySelectorAll('.group-add').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.dataset.type;
+                    const child = { type };
+                    if (type === 'heading' || type === 'subheading' || type === 'text') child.text = '';
+                    if (type === 'list') child.items = [''];
+                    b.children.push(child);
+                    render();
+                });
+            });
+            // управление дочерними
+            const childrenEl = wrap.querySelector('.group-children');
+            childrenEl.querySelectorAll('.group-child').forEach((childEl, ci) => {
+                const ch = b.children[ci];
+                if (!ch) return;
+                // вверх/вниз
+                childEl.querySelector('.gchild-up')?.addEventListener('click', () => {
+                    if (ci > 0) { [b.children[ci-1], b.children[ci]] = [b.children[ci], b.children[ci-1]]; render(); }
+                });
+                childEl.querySelector('.gchild-down')?.addEventListener('click', () => {
+                    if (ci < b.children.length - 1) { [b.children[ci], b.children[ci+1]] = [b.children[ci+1], b.children[ci]]; render(); }
+                });
+                // удалить
+                childEl.querySelector('.gchild-del')?.addEventListener('click', () => {
+                    b.children.splice(ci, 1);
+                    render();
+                });
+                // текст
+                childEl.querySelector('.gchild-text')?.addEventListener('input', e => { ch.text = e.target.value; });
+                // список
+                childEl.querySelectorAll('.gchild-list-item').forEach(inp => {
+                    inp.addEventListener('input', e => { ch.items[+e.target.dataset.i] = e.target.value; });
+                });
+                childEl.querySelectorAll('.gchild-list-del').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        ch.items.splice(+btn.dataset.i, 1);
+                        if (!ch.items.length) ch.items = [''];
+                        render();
+                    });
+                });
+                childEl.querySelector('.gchild-list-add')?.addEventListener('click', () => {
+                    ch.items.push('');
+                    render();
+                });
+            });
+            break;
+        }
     }
 }
 
@@ -353,6 +452,18 @@ async function uploadMany(files) {
 
 function escAttr(s) { return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 function escText(s) { return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+/* ==================== ЗАГРУЗКА КАТЕГОРИЙ ==================== */
+async function loadCategories() {
+    try {
+        const res = await fetch('/admin/api/categories');
+        if (!res.ok) return;
+        const cats = await res.json();
+        const dl = document.getElementById('category-list');
+        if (!dl) return;
+        dl.innerHTML = cats.map(c => `<option value="${c.name.replace(/"/g,'&quot;')}"></option>`).join('');
+    } catch (e) {}
+}
 
 /* ==================== КНОПКИ ДОБАВЛЕНИЯ ==================== */
 
@@ -466,7 +577,39 @@ document.getElementById('news-form').addEventListener('submit', async (e) => {
     }
 });
 
+loadCategories();
 loadItem();
+
+/* ===== ЗАГРУЗКА КАТЕГОРИЙ ИЗ API ===== */
+async function loadCategories() {
+    try {
+        const res = await fetch('/admin/api/categories');
+        if (!res.ok) return;
+        const cats = await res.json();
+        const dl = document.getElementById('category-list');
+        dl.innerHTML = cats.map(c => `<option value="${escAttr(c.name)}">`).join('');
+    } catch(e) { /* тихо */ }
+}
+
+/* Если ввели новую категорию которой нет в списке — сохраняем */
+document.getElementById('category').addEventListener('change', async function() {
+    const val = this.value.trim();
+    if (!val) return;
+    const dl = document.getElementById('category-list');
+    const existing = [...dl.options].map(o => o.value);
+    if (!existing.includes(val)) {
+        try {
+            await fetch('/admin/api/categories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: val })
+            });
+            await loadCategories();
+        } catch(e) { /* тихо */ }
+    }
+});
+
+loadCategories();
 </script>
 </body>
 </html>

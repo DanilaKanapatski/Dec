@@ -184,6 +184,11 @@
     pointer-events: none;
     transition: opacity 0.2s ease, visibility 0.2s ease;
     z-index: 10;
+    /* Ограничиваем высоту: 6 пунктов × 40px + 16px padding = 256px */
+    max-height: 256px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-main-decard) transparent;
 }
 
 .filter-select.is-open .filter-select__menu {

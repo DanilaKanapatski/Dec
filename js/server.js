@@ -90,7 +90,7 @@ app.get('/admin/logout', (req, res) => {
 });
 
 /* ==================== ЗАЩИТА СТРАНИЦ АДМИНКИ ==================== */
-const adminPages = ['index.html', 'news.html', 'editor.html', 'projects.html', 'project-editor.html'];
+const adminPages = ['index.html', 'news.html', 'editor.html', 'projects.html', 'project-editor.html', 'categories.html'];
 adminPages.forEach(p => {
     app.get('/admin/' + p, requireAuth, (req, res) => {
         res.sendFile(path.join(ROOT, 'admin', p));
@@ -127,10 +127,44 @@ app.get('/api/news', (req, res) => {
     res.json(rows);
 });
 
+// Публичный API: все уникальные категории из опубликованных статей + из таблицы категорий
+app.get('/api/news/categories', (req, res) => {
+    const dbCats = db.prepare('SELECT name FROM news_categories ORDER BY sort_order, name').all().map(r => r.name);
+    const newsCats = db.prepare(`SELECT DISTINCT category FROM news WHERE status='published' AND category != ''`).all().map(r => r.category);
+    const all = [...dbCats, ...newsCats.filter(c => !dbCats.includes(c))];
+    res.json(all);
+});
+
+// ВАЖНО: /api/news/categories должен быть ДО /api/news/:slug,
+// иначе Express воспримет "categories" как slug
 app.get('/api/news/:slug', (req, res) => {
     const row = db.prepare(`SELECT * FROM news WHERE slug = ? AND status = 'published'`).get(req.params.slug);
     if (!row) return res.status(404).json({ error: 'Not found' });
     res.json(row);
+});
+
+// Админ: список категорий
+app.get('/admin/api/categories', requireAuth, (req, res) => {
+    res.json(db.prepare('SELECT * FROM news_categories ORDER BY sort_order, name').all());
+});
+
+// Админ: добавить категорию
+app.post('/admin/api/categories', requireAuth, (req, res) => {
+    const { name } = req.body;
+    if (!name || !name.trim()) return res.status(400).json({ error: 'Название обязательно' });
+    const maxOrder = db.prepare('SELECT MAX(sort_order) as m FROM news_categories').get().m || 0;
+    try {
+        const r = db.prepare('INSERT INTO news_categories (name, sort_order) VALUES (?, ?)').run(name.trim(), maxOrder + 1);
+        res.json({ success: true, id: r.lastInsertRowid });
+    } catch (e) {
+        res.status(409).json({ error: 'Такая категория уже есть' });
+    }
+});
+
+// Админ: удалить категорию
+app.delete('/admin/api/categories/:id', requireAuth, (req, res) => {
+    db.prepare('DELETE FROM news_categories WHERE id = ?').run(req.params.id);
+    res.json({ success: true });
 });
 
 app.get('/admin/api/news', requireAuth, (req, res) => {
@@ -148,6 +182,14 @@ app.post('/admin/api/news', requireAuth, (req, res) => {
     slug = slug ? slugify(slug) : slugify(title);
     if (!slug) slug = 'article-' + Date.now();
 
+    // Если slug уже занят — добавляем суффикс
+    const base = slug;
+    let attempt = 0;
+    while (db.prepare('SELECT id FROM news WHERE slug = ?').get(slug)) {
+        attempt++;
+        slug = base + '-' + attempt;
+    }
+
     try {
         const result = db.prepare(`
             INSERT INTO news (title, slug, preview, content, cover_image, category, reading_time, published_at, status)
@@ -160,7 +202,8 @@ app.post('/admin/api/news', requireAuth, (req, res) => {
         );
         res.json({ success: true, id: result.lastInsertRowid, slug });
     } catch (e) {
-        res.status(400).json({ error: 'Ошибка создания. Slug должен быть уникальным.' });
+        console.error('news POST error:', e.message);
+        res.status(400).json({ error: 'Ошибка создания статьи: ' + e.message });
     }
 });
 

@@ -1,4 +1,11 @@
 (() => {
+    // Компенсируем fixed header — отступ у <main>
+    document.addEventListener('DOMContentLoaded', () => {
+        const headerEl = document.querySelector('.header');
+        const mainEl = document.querySelector('main');
+        if (headerEl && mainEl) mainEl.style.paddingTop = headerEl.offsetHeight + 'px';
+    });
+
     /* =============== ВСЁ СТАРОЕ UI-ПОВЕДЕНИЕ (селекты / поиск / toggle) =============== */
     const filters = document.getElementById('blog-filters');
     const toggleBtn = document.getElementById('blog-filter-toggle');
@@ -33,10 +40,7 @@
     /* =============== UI СЕЛЕКТОВ =============== */
     selects.forEach(select => {
         const trigger = select.querySelector('.filter-select__trigger');
-        const valueEl = select.querySelector('.filter-select__value');
-        const defaultValue = valueEl.dataset.default;
-        const options = select.querySelectorAll('.filter-select__option');
-        const filterKey = select.dataset.filter; // "category" или "date"
+        const filterKey = select.dataset.filter;
 
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -45,25 +49,11 @@
             if (!isOpen) select.classList.add('is-open');
         });
 
-        options.forEach(option => {
-            option.addEventListener('click', () => {
-                options.forEach(opt => opt.classList.remove('is-active'));
-                option.classList.add('is-active');
-
-                const value = option.dataset.value;
-                valueEl.textContent = value;
-                select.classList.remove('is-open');
-
-                if (value !== defaultValue) select.classList.add('is-filled');
-                else select.classList.remove('is-filled');
-
-                // обновляем состояние
-                if (filterKey === 'category') state.category = value;
-                if (filterKey === 'date') state.date = value;
-
-                applyFilters();
-            });
-        });
+        // Для date-селекта инициализируем опции сразу (они статичные)
+        if (filterKey === 'date') {
+            bindSelectOptions(select);
+        }
+        // category-селект инициализируется после загрузки данных в load()
     });
 
     document.addEventListener('click', (e) => {
@@ -135,10 +125,41 @@
         const valueEl = select.querySelector('.filter-select__value');
         const defaultValue = valueEl.dataset.default;
         const options = select.querySelectorAll('.filter-select__option');
-
         const defaultOption = [...options].find(opt => opt.dataset.value === defaultValue);
         if (defaultOption) defaultOption.classList.add('is-active');
     });
+
+    // Универсальная привязка опций к селекту
+    function bindSelectOptions(select) {
+        const valueEl = select.querySelector('.filter-select__value');
+        const defaultValue = valueEl?.dataset.default;
+        const filterKey = select.dataset.filter;
+        const menu = select.querySelector('.filter-select__menu');
+        if (!menu) return;
+
+        // клонируем опции чтобы убрать старые listeners
+        menu.querySelectorAll('.filter-select__option').forEach(option => {
+            const fresh = option.cloneNode(true);
+            option.replaceWith(fresh);
+            fresh.addEventListener('click', () => {
+                menu.querySelectorAll('.filter-select__option').forEach(o => o.classList.remove('is-active'));
+                fresh.classList.add('is-active');
+
+                const value = fresh.dataset.value;
+                if (valueEl) valueEl.textContent = value;
+                select.classList.remove('is-open');
+
+                // is-filled → белый цвет выбранного значения
+                if (value !== defaultValue) select.classList.add('is-filled');
+                else select.classList.remove('is-filled');
+
+                if (filterKey === 'category') state.category = value;
+                if (filterKey === 'date') state.date = value;
+
+                applyFilters();
+            });
+        });
+    }
 
     /* =============== ВСПОМОГАТЕЛЬНЫЕ =============== */
     function esc(s) {
@@ -219,12 +240,12 @@
                     <h3 class="blog-title">${esc(item.title)}</h3>
                     <div class="blog-info">
                         <span class="blog-info__time">${esc(readingTime)}</span>
-                        <button class="blog-btn" type="button" data-modal-open="contact" onclick="event.preventDefault();">
+                        <a href="${url}" class="blog-btn">
                             <span class="blog-btn__text-wrap">
-                                <span class="blog-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
-                                <span class="blog-btn__text">СВЯЗАТЬСЯ С НАМИ</span>
+                                <span class="blog-btn__text">ОТКРЫТЬ</span>
+                                <span class="blog-btn__text">ОТКРЫТЬ</span>
                             </span>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </a>
@@ -283,10 +304,37 @@
     async function load() {
         if (!listEl) return;
 
+        // Загружаем категории и новости параллельно
+        const [newsRes, catsRes] = await Promise.allSettled([
+            fetch('/api/news'),
+            fetch('/api/news/categories')
+        ]);
+
+        // Категории — рендерим в меню динамически
+        if (catsRes.status === 'fulfilled' && catsRes.value.ok) {
+            try {
+                const cats = await catsRes.value.json();
+                const menu = document.getElementById('category-filter-menu');
+                const catSelect = menu?.closest('.filter-select');
+                if (menu && cats.length) {
+                    cats.forEach(cat => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'filter-select__option';
+                        btn.dataset.value = cat;
+                        btn.textContent = cat;
+                        menu.appendChild(btn);
+                    });
+                }
+                // Привязываем все опции (включая «Все» + загруженные)
+                if (catSelect) bindSelectOptions(catSelect);
+            } catch (e) { console.error('cats error', e); }
+        }
+
+        // Новости
         try {
-            const res = await fetch('/api/news');
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            allNews = await res.json();
+            if (newsRes.status !== 'fulfilled' || !newsRes.value.ok) throw new Error();
+            allNews = await newsRes.value.json();
         } catch (e) {
             console.error('Ошибка загрузки новостей', e);
             listEl.innerHTML = renderEmpty('Не удалось загрузить статьи');
@@ -295,6 +343,9 @@
 
         applyFilters();
     }
-
     load();
+
+
+
+
 })();

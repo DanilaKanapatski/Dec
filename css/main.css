@@ -101,12 +101,12 @@
       60px — фиксированная высота выреза
     */
     clip-path: polygon(
-        0 0,
-        76.3% 0,
-        76.3% 60px,
-        100% 60px,
-        100% 100%,
-        0 100%
+            0 0,
+            76.3% 0,
+            76.3% 60px,
+            100% 60px,
+            100% 100%,
+            0 100%
     );
 }
 
@@ -125,12 +125,12 @@
       затем наверх до 0 и дальше стандартным контуром.
     */
     clip-path: polygon(
-        0 60px,
-        47% 60px,
-        47% 0,
-        100% 0,
-        100% 100%,
-        0 100%
+            0 60px,
+            47% 60px,
+            47% 0,
+            100% 0,
+            100% 100%,
+            0 100%
     );
 }
 
@@ -1991,7 +1991,7 @@
         padding-top: 0;
     }
 
-   .service-row__chevron {
+    .service-row__chevron {
         display: block;
         margin-top: 24px;
     }
@@ -2334,6 +2334,7 @@
 }
 
 /*advantages*/
+/* advantages */
 
 .advantages {
     margin-top: 200px;
@@ -2355,34 +2356,68 @@
 
 .adv-card {
     position: relative;
-    /*width: 465px;*/
     min-height: 794px;
     padding: 32px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background: var(--color-bg-black);
-    border: 1px solid var(--color-line-border);
-    overflow: hidden;
+    overflow: visible;
     will-change: transform;
-}
-
-/* Убираем двойную линию на стыке соседних карточек */
-.adv-card--3 {
-    border-left: none;
-}
-
-.adv-card--4 {
-    margin-top: 0;
-    background-image: url("../assets/images/back.svg");
     border: none;
-    padding-top: 92px;
 }
+
+/* SVG-рамка для карточек со ступенькой */
+.adv-card--1::before,
+.adv-card--4::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.adv-card--1::before {
+    background-image: url("../assets/images/adv-1.svg");
+}
+
+.adv-card--4::before {
+    background-image: url("../assets/images/adv-2.svg");
+}
+
+
+/* обычные карточки 2 и 3 */
+.adv-card--2::before,
+.adv-card--3::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-right: 1px solid var(--color-line-border);
+    border-left: 1px solid var(--color-line-border);
+    border-top: 1px solid var(--color-line-border);
+    border-bottom: 1px solid var(--color-line-border);
+}
+
+/* правая внешняя линия у последней карточки */
+/*.adv-card--4::after {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    right: 0;*/
+/*    width: 1px;*/
+/*    height: 100%;*/
+/*    background: var(--color-line-border);*/
+/*    z-index: 1;*/
+/*    pointer-events: none;*/
+/*}*/
 
 .adv-card--1 {
     margin-top: 120px;
-    background-image: url("../assets/images/back.svg");
-    border: none;
     padding-top: 92px;
 }
 
@@ -2394,9 +2429,19 @@
     margin-top: 60px;
 }
 
-.adv-card h3 {
+.adv-card--4 {
+    margin-top: 0;
+    padding-top: 92px;
+}
+
+.adv-card h3,
+.adv-card > div,
+.adv-card ul {
     position: relative;
     z-index: 2;
+}
+
+.adv-card h3 {
     max-width: 318px;
     font-weight: 500;
     font-size: 36px;
@@ -2405,8 +2450,6 @@
 }
 
 .adv-card > div {
-    position: relative;
-    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2420,8 +2463,6 @@
 }
 
 .adv-card ul {
-    position: relative;
-    z-index: 2;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -2743,6 +2784,8 @@
 
     /*advantages*/
 
+    /* advantages — desktop */
+
     .advantages {
         margin-top: 200px;
         overflow: hidden;
@@ -2754,7 +2797,7 @@
 
     .advantages-list {
         display: grid;
-        grid-template-columns: repeat(4,1fr);
+        grid-template-columns: repeat(4, 1fr);
         justify-content: space-between;
         align-items: start;
         gap: 0;
@@ -2762,29 +2805,59 @@
 
     .adv-card {
         position: relative;
-        /*width: 465px;*/
         min-height: 582px;
         padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         background: var(--color-bg-black);
-        border: 1px solid var(--color-line-border);
-        overflow: hidden;
+        overflow: visible;
         will-change: transform;
+        border: none;
     }
 
-    .adv-card--4 {
-        margin-top: 0;
-        background-image: url("../assets/images/back.svg");
-        border: none;
-        padding-top: 65px;
+    /* SVG-рамка для 1 и 4 карточек */
+    .adv-card--1::before,
+    .adv-card--4::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        /*background-image: url("../assets/images/adv-card-shape-desktop.svg");*/
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
     }
+
+    /* обычные карточки 2 и 3 */
+    .adv-card--2::before,
+    .adv-card--3::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        border-left: 1px solid var(--color-line-border);
+        border-top: 1px solid var(--color-line-border);
+        border-bottom: 1px solid var(--color-line-border);
+    }
+
+    /*!* правая внешняя линия только у 4 *!*/
+    /*.adv-card--4::after {*/
+    /*    content: "";*/
+    /*    position: absolute;*/
+    /*    top: 0;*/
+    /*    right: 0;*/
+    /*    width: 1px;*/
+    /*    height: 100%;*/
+    /*    background: var(--color-line-border);*/
+    /*    z-index: 1;*/
+    /*    pointer-events: none;*/
+    /*}*/
 
     .adv-card--1 {
         margin-top: 80px;
-        background-image: url("../assets/images/back.svg");
-        border: none;
         padding-top: 68px;
     }
 
@@ -2796,9 +2869,19 @@
         margin-top: 40px;
     }
 
-    .adv-card h3 {
+    .adv-card--4 {
+        margin-top: 0;
+        padding-top: 65px;
+    }
+
+    .adv-card h3,
+    .adv-card > div,
+    .adv-card ul {
         position: relative;
         z-index: 2;
+    }
+
+    .adv-card h3 {
         max-width: 188px;
         font-weight: 500;
         font-size: 24px;
@@ -2807,8 +2890,6 @@
     }
 
     .adv-card > div {
-        position: relative;
-        z-index: 2;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2822,8 +2903,6 @@
     }
 
     .adv-card ul {
-        position: relative;
-        z-index: 2;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -3162,6 +3241,10 @@
 
     .advantages-list .adv-card--3 {
         margin-top: -60px;
+    }
+
+    .adv-card--1::before, .adv-card--4::before {
+        background: none;
     }
 
 
@@ -3504,12 +3587,12 @@
         grid-column: 1;
         padding: 32px 20px 0 20px ;
         clip-path: polygon(
-            0 0,
-            76% 0,
-            76% 49px,
-            100% 49px,
-            100% 100%,
-            0 100%
+                0 0,
+                76% 0,
+                76% 49px,
+                100% 49px,
+                100% 100%,
+                0 100%
         );
     }
 
@@ -3722,12 +3805,12 @@
         padding: 20px 20px 0 20px;
         /* Вырез в правом верхнем углу */
         clip-path: polygon(
-            0 0,
-            73% 0,
-            73% 32px,
-            100% 32px,
-            100% 100%,
-            0 100%
+                0 0,
+                73% 0,
+                73% 32px,
+                100% 32px,
+                100% 100%,
+                0 100%
         );
     }
 
@@ -4176,7 +4259,15 @@
     }
 }
 
-@media screen and (max-width: 1500px) {
+@media screen and (max-width: 1305px) {
+
+    .main-stat--big {
+        grid-column: 1 / span 2;
+    }
+
+    .main-stat::after {
+        max-width: 295px;
+    }
     /*.main-desc {*/
     /*    max-width: 260px;*/
     /*}*/

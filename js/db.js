@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS news (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS news_categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    sort_order INTEGER DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -70,3 +76,11 @@ if (!adminExists) {
 }
 
 module.exports = db;
+
+// сидируем дефолтные категории если таблица пустая
+const catCount = db.prepare('SELECT COUNT(*) as c FROM news_categories').get().c;
+if (catCount === 0) {
+    const defaults = ['Мероприятия', 'Статьи', 'Работы', 'Культура компании'];
+    const ins = db.prepare('INSERT OR IGNORE INTO news_categories (name, sort_order) VALUES (?, ?)');
+    defaults.forEach((n, i) => ins.run(n, i));
+}

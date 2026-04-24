@@ -119,12 +119,12 @@ function initHeroScene() {
     // Правая панель — только десктоп (на планшете/мобилке скрыта)
     if (isDesktop && rightPanel) {
         gsap.to(rightPanel, { height: stageH, ease: 'none', scrollTrigger: {
-            trigger: stage,
-            start: 'top top',
-            end: `+=${stageH * 1.0}`,   // правая быстрее левой, но медленнее чем было
-            scrub: 1.2,
-            invalidateOnRefresh: true
-        }});
+                trigger: stage,
+                start: 'top top',
+                end: `+=${stageH * 1.0}`,   // правая быстрее левой, но медленнее чем было
+                scrub: 1.2,
+                invalidateOnRefresh: true
+            }});
     }
 
     if (heroMedia) {
@@ -683,7 +683,7 @@ function initAdvantagesParallax() {
     }
 
     if (window.innerWidth <= 1919) {
-        const shifts = [-20, -55, -30, -70];
+        const shifts = [-20, -55, -30, -30];
 
         cards.forEach((card, index) => {
             gsap.to(card, {
@@ -701,7 +701,7 @@ function initAdvantagesParallax() {
         return;
     }
 
-    const shifts = [-180, -180, -180, 0];
+    const shifts = [-180, -180, -180, -180];
 
     cards.forEach((card, index) => {
         gsap.to(card, {
