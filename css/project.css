@@ -157,38 +157,62 @@
     /* break out of container to full viewport width */
 }
 
+/* ══ Единый стиль для всех медиа: видео / фото / embed ══ */
+
+/* Общий контейнер — на всю ширину, 85vh высота */
+.project-media-block {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    height: 85vh;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Видео (свой файл) */
+.project-media-block video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Фото */
+.project-media-block img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* YouTube / RuTube / Vimeo */
+.project-media-block iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Оставляем .project-media--full и .project-embed-wrap как алиасы */
 .project-3d .project-media--full,
 .project-tour .project-media--full,
 .project-presentation .project-media--full {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    width: 100%;
+    height: 100%;
     display: block;
-    max-height: 80vh;
-    object-fit: contain;
-    background: #000;
 }
 
-.project-3d video,
-.project-tour video,
-.project-presentation video {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    display: block;
-    max-height: 80vh;
-    background: #000;
+.project-embed-wrap {
+    width: 100%;
+    height: 100%;
 }
 
-.project-3d img.project-media--full,
-.project-tour img.project-media--full,
-.project-presentation img.project-media--full {
-    max-height: none;
-    object-fit: cover;
-}
-
-/* Fallback for video set directly (not via class) */
-.project-3d video {
-    height: auto;
+.project-embed-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 /* RENDERS */

@@ -19,6 +19,63 @@ function isVideoUrl(url) {
     return /\.(mp4|webm|ogg|mov|m4v)$/i.test(url || '');
 }
 
+function isImageUrl(url) {
+    return /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(url || '');
+}
+
+// Возвращает embed-URL для YouTube / RuTube / Vimeo, или null
+function getEmbedUrl(url) {
+    if (!url) return null;
+
+    // YouTube: watch?v=ID, youtu.be/ID, shorts/ID
+    let m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (m) return `https://www.youtube.com/embed/${m[1]}?rel=0&autoplay=0`;
+
+    // RuTube: rutube.ru/video/HASH
+    m = url.match(/rutube\.ru\/video\/([a-zA-Z0-9]+)/);
+    if (m) return `https://rutube.ru/play/embed/${m[1]}/`;
+
+    // Vimeo: vimeo.com/ID
+    m = url.match(/vimeo\.com\/(\d+)/);
+    if (m) return `https://player.vimeo.com/video/${m[1]}`;
+
+    return null;
+}
+
+// Рендерит нужный HTML для любого src: видеофайл, изображение, embed, или ссылка
+function renderMedia(src, title) {
+    if (!src) return '';
+
+    // Видеофайл (.mp4 и т.д.)
+    if (isVideoUrl(src)) {
+        return `<div class="project-media-block">
+            <video src="${escAttr(src)}" controls playsinline></video>
+        </div>`;
+    }
+
+    // Изображение — на всю ширину, та же высота что и видео
+    if (isImageUrl(src)) {
+        return `<div class="project-media-block">
+            <img src="${escAttr(src)}" alt="${escAttr(title || '')}">
+        </div>`;
+    }
+
+    // YouTube / RuTube / Vimeo
+    const embedUrl = getEmbedUrl(src);
+    if (embedUrl) {
+        return `<div class="project-media-block">
+            <iframe src="${escAttr(embedUrl)}"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        </div>`;
+    }
+
+    // Внешняя ссылка (ссылка на тур, презентацию и т.п.)
+    return `<a class="project-service-link" href="${escAttr(src)}" target="_blank" rel="noopener">Открыть →</a>`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Компенсируем fixed header — отступ у <main>
     const mainEl = document.querySelector('main');
@@ -78,46 +135,34 @@ async function loadProject() {
     // === 3D-ТУР ===
     const hasTour = item.tour_src && item.tour_src.trim();
     if (hasTour) {
+        const tourEl = document.getElementById('project-tour');
         const tourMediaEl = document.getElementById('project-tour-media');
         if (tourMediaEl) {
-            if (isVideoUrl(item.tour_src)) {
-                tourMediaEl.innerHTML = `<video src="${escAttr(item.tour_src)}" controls muted playsinline class="project-media--full"></video>`;
-            } else if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(item.tour_src)) {
-                tourMediaEl.innerHTML = `<img src="${escAttr(item.tour_src)}" alt="3D-тур ${escAttr(item.title)}" class="project-media--full">`;
-            } else {
-                // external link
-                tourMediaEl.innerHTML = `<a class="project-service-link" href="${escAttr(item.tour_src)}" target="_blank" rel="noopener">Открыть 3D-тур →</a>`;
-            }
+            tourMediaEl.innerHTML = renderMedia(item.tour_src, item.title);
         }
-        document.getElementById('project-tour').hidden = false;
+        if (tourEl) tourEl.hidden = false;
     }
 
     // === 3D-РОЛИК ===
     const hasVideo = item.video_src && item.video_src.trim();
     if (hasVideo) {
         const mediaEl = document.getElementById('project-3d-media');
-        if (isVideoUrl(item.video_src)) {
-            mediaEl.innerHTML = `<video src="${escAttr(item.video_src)}" controls muted playsinline style="width: 100%; height: auto; display: block;"></video>`;
-        } else {
-            mediaEl.innerHTML = `<img src="${escAttr(item.video_src)}" alt="3D-ролик ${escAttr(item.title)}">`;
+        const videoEl = document.getElementById('project-3d');
+        if (mediaEl) {
+            mediaEl.innerHTML = renderMedia(item.video_src, item.title);
         }
-        document.getElementById('project-3d').hidden = false;
+        if (videoEl) videoEl.hidden = false;
     }
 
     // === ПРЕЗЕНТАЦИИ ===
     const hasPresentation = item.presentation_src && item.presentation_src.trim();
     if (hasPresentation) {
+        const presEl = document.getElementById('project-presentation');
         const presMediaEl = document.getElementById('project-presentation-media');
         if (presMediaEl) {
-            if (isVideoUrl(item.presentation_src)) {
-                presMediaEl.innerHTML = `<video src="${escAttr(item.presentation_src)}" controls muted playsinline class="project-media--full"></video>`;
-            } else if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(item.presentation_src)) {
-                presMediaEl.innerHTML = `<img src="${escAttr(item.presentation_src)}" alt="Презентация ${escAttr(item.title)}" class="project-media--full">`;
-            } else {
-                presMediaEl.innerHTML = `<a class="project-service-link" href="${escAttr(item.presentation_src)}" target="_blank" rel="noopener">Открыть презентацию →</a>`;
-            }
+            presMediaEl.innerHTML = renderMedia(item.presentation_src, item.title);
         }
-        document.getElementById('project-presentation').hidden = false;
+        if (presEl) presEl.hidden = false;
     }
 
     // === Рендеры экстерьера ===
