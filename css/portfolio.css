@@ -300,7 +300,7 @@
     perspective: 1384px;
 }
 
-.portfolio-block:last-child {
+.portfolio-block-link:last-child .portfolio-block {
     padding-bottom: 0;
     border: none;
 }
@@ -863,7 +863,7 @@
         perspective: 1384px;
     }
 
-    .portfolio-block:last-child {
+    .portfolio-block-link:last-child .portfolio-block {
         padding-bottom: 0;
         border: none;
     }
@@ -1262,7 +1262,7 @@
         perspective: 1384px;
     }
 
-    .portfolio-block:last-child {
+    .portfolio-block-link:last-child .portfolio-block {
         padding-bottom: 0;
         border: none;
     }

@@ -64,6 +64,10 @@ body.menu-open {
     overflow: hidden;
 }
 
+.featured-portfolio__header span {
+    text-decoration: underline;
+}
+
 .link-slide span {
     display: block;
     transition: transform 0.35s ease;
