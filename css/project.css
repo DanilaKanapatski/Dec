@@ -154,16 +154,16 @@
 .project-3d,
 .project-tour,
 .project-presentation {
-    /* break out of container to full viewport width */
+    /* media inside container with padding */
 }
 
 /* ══ Единый стиль для всех медиа: видео / фото / embed ══ */
 
-/* Общий контейнер — на всю ширину, 85vh высота */
+/* Контейнер — ширина как у рендеров (внутри container), высота 85vh */
 .project-media-block {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    height: 85vh;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
     background: #000;
     display: flex;
     align-items: center;
@@ -213,6 +213,14 @@
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* Mobile: пропорциональная высота вместо фиксированных 85vh */
+@media screen and (max-width: 767px) {
+    .project-media-block {
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
 }
 
 /* RENDERS */

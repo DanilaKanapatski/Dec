@@ -773,7 +773,21 @@
     height: 100%;
     display: block;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1);
 }
+
+/* Hover: zoom preview image 10% when hovering the whole card */
+.featured-portfolio__card:hover .fp-card-preview__slide img {
+    transform: scale(1.1);
+}
+
+/* Card is a link — show pointer */
+.featured-portfolio__card {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
 
 .featured-project__right {
     display: flex;

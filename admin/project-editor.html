@@ -121,6 +121,12 @@
             </div>
         </div>
 
+        <!-- КРАТКОЕ ОПИСАНИЕ ДЛЯ ГЛАВНОЙ -->
+        <div class="field field--wide">
+            <span class="field__label">Краткое описание (для главной страницы)</span>
+            <textarea id="short_desc" rows="3" placeholder="1–2 предложения. Отображается в блоке «Последние проекты» на главной."></textarea>
+        </div>
+
         <!-- О ПРОЕКТЕ -->
         <div class="field field--wide">
             <span class="field__label">О проекте (описание)</span>
@@ -531,6 +537,7 @@
         document.getElementById('sort_order').value = item.sort_order || 0;
         document.getElementById('next_project_id').value = item.next_project_id || 0;
         document.getElementById('about_text').value = item.about_text || '';
+        document.getElementById('short_desc').value = item.short_desc || '';
 
         coverInput.value = item.cover_image || '';
         renderCover(item.cover_image || '');
@@ -585,6 +592,7 @@
             sort_order: document.getElementById('sort_order').value,
             next_project_id: document.getElementById('next_project_id').value,
             about_text: document.getElementById('about_text').value,
+            short_desc: document.getElementById('short_desc').value,
             video_src: videoInput.value.trim(),
             tour_src: document.getElementById('tour_src').value.trim(),
             presentation_src: document.getElementById('presentation_src').value.trim(),

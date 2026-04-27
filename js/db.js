@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS projects (
     video_src TEXT DEFAULT '',
     tour_src TEXT DEFAULT '',
     presentation_src TEXT DEFAULT '',
+    short_desc TEXT DEFAULT '',
     exterior_renders TEXT DEFAULT '[]',
     interior_renders TEXT DEFAULT '[]',
     next_project_id INTEGER DEFAULT 0,
@@ -74,6 +75,9 @@ if (!projCols.includes('tour_src')) {
 }
 if (!projCols.includes('presentation_src')) {
     db.exec(`ALTER TABLE projects ADD COLUMN presentation_src TEXT DEFAULT ''`);
+}
+if (!projCols.includes('short_desc')) {
+    db.exec(`ALTER TABLE projects ADD COLUMN short_desc TEXT DEFAULT ''`);
 }
 
 // админ

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCoreLibs();
     initHeroScene();
     initHeroArrow();
-    initPinnedPortfolio();
+    fetchFeaturedProjects().then(() => initPinnedPortfolio());
     initServiceRows();
     initAdvantagesParallax();
     initRevealSections();
@@ -260,6 +260,106 @@ function initHeroArrow() {
 }
 
 /* pinned portfolio */
+/* ——— Загружаем последние 4 проекта из API ——— */
+async function fetchFeaturedProjects() {
+    try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) return;
+        const all = await res.json();
+        if (!all || !all.length) return;
+
+        // sort_order ASC, потом по дате — уже отсортировано сервером
+        const top4 = all.slice(0, 4);
+
+        // Месяцы на русском
+        const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                         'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return '';
+            return `${MONTHS[d.getMonth()]} ${d.getFullYear()} г.`;
+        }
+
+        function esc(s) {
+            return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        const section = document.getElementById('featuredPortfolio');
+        if (!section) return;
+
+        // Обновляем десктопные bg-slides
+        const bgTrack = section.querySelector('.featured-portfolio__bg-track');
+        if (bgTrack) {
+            bgTrack.innerHTML = top4.map(p => `
+                <div class="fp-bg-slide">
+                    <img src="${esc(p.cover_image)}" alt="${esc(p.title)}">
+                </div>
+            `).join('');
+        }
+
+        // Обновляем preview slides
+        const previewTrack = section.querySelector('.fp-card-preview__track');
+        if (previewTrack) {
+            previewTrack.innerHTML = top4.map(p => `
+                <div class="fp-card-preview__slide">
+                    <img src="${esc(p.cover_image)}" alt="${esc(p.title)}">
+                </div>
+            `).join('');
+        }
+
+        // Карточка — делаем ссылкой на первый проект, slug будет меняться при переключении
+        const card = section.querySelector('.featured-portfolio__card');
+        if (card) {
+            card.dataset.projects = JSON.stringify(top4.map(p => ({
+                title: p.title,
+                subtitle: p.place || '',
+                desc: p.short_desc || '',
+                city: p.city || '',
+                date: formatDate(p.published_at),
+                slug: p.slug
+            })));
+            // Делаем карточку кликабельной
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                const projects = JSON.parse(card.dataset.projects || '[]');
+                const idx = parseInt(card.dataset.currentIndex || '0');
+                const slug = projects[idx]?.slug;
+                if (slug) window.location.href = `pages/project.html?slug=${slug}`;
+            });
+        }
+
+        // Обновляем мобильную карточку
+        const mobCard = section.querySelector('.featured-portfolio__mobile-card');
+        if (mobCard && top4[0]) {
+            const p = top4[0];
+            const imgEl = mobCard.querySelector('.featured-portfolio__mobile-image img');
+            const prevEl = mobCard.querySelector('.featured-portfolio__mobile-preview img');
+            const titleEl = mobCard.querySelector('.featured-portfolio__mobile-meta h3');
+            const subtitleEl = mobCard.querySelector('.featured-portfolio__mobile-meta span:first-child');
+            const cityEl = mobCard.querySelector('.featured-portfolio__mobile-place span:first-child');
+            const dateEl = mobCard.querySelector('.featured-portfolio__mobile-place span:last-child');
+            const descEl = mobCard.querySelector('.featured-portfolio__mobile-inner > p');
+            if (imgEl) imgEl.src = p.cover_image || '';
+            if (prevEl) prevEl.src = p.cover_image || '';
+            if (titleEl) titleEl.textContent = p.title || '';
+            if (subtitleEl) subtitleEl.textContent = p.place || '';
+            if (cityEl) cityEl.textContent = p.city || '';
+            if (dateEl) dateEl.textContent = formatDate(p.published_at);
+            if (descEl) descEl.textContent = p.short_desc || '';
+            // Клик по мобильной карточке
+            mobCard.style.cursor = 'pointer';
+            mobCard.addEventListener('click', () => {
+                if (p.slug) window.location.href = `pages/project.html?slug=${p.slug}`;
+            });
+        }
+
+    } catch (e) {
+        console.warn('Featured projects load failed:', e);
+    }
+}
+
 function initPinnedPortfolio() {
     if (!window.gsap || !window.ScrollTrigger) return;
 
@@ -294,35 +394,13 @@ function initPinnedPortfolio() {
     const cityEl = card.querySelector('.fp-card-city');
     const dateEl = card.querySelector('.fp-card-date');
 
-    const projects = [
-        {
-            title: 'Nexus',
-            subtitle: 'Аквилон',
-            desc: 'Мы подготовили рендеры и ролик интерьера. Проект успешно прошёл презентацию — клиент привлёк инвестиции и запустил строительство.',
-            city: 'Москва',
-            date: 'Декабрь 2024 г.'
-        },
-        {
-            title: 'Forma',
-            subtitle: 'MR Group',
-            desc: 'Комплекс презентационных рендеров и визуальных материалов для маркетинга и продаж.',
-            city: 'Москва',
-            date: 'Ноябрь 2024 г.'
-        },
-        {
-            title: 'Solar',
-            subtitle: 'Аквилон',
-            desc: 'Подготовили визуализацию и анимационные материалы для продвижения жилого проекта.',
-            city: 'Санкт-Петербург',
-            date: 'Октябрь 2024 г.'
-        },
-        {
-            title: 'Riva',
-            subtitle: 'Dogma',
-            desc: 'Создали серию материалов для презентации объекта инвесторам и маркетинговой команды.',
-            city: 'Казань',
-            date: 'Сентябрь 2024 г.'
-        }
+    // Данные из API (заполнены fetchFeaturedProjects) или fallback
+    const apiData = card.dataset.projects ? JSON.parse(card.dataset.projects) : null;
+    const projects = apiData || [
+        { title: 'Nexus', subtitle: 'Аквилон', desc: 'Мы подготовили рендеры и ролик интерьера. Проект успешно прошёл презентацию — клиент привлёк инвестиции и запустил строительство.', city: 'Москва', date: 'Декабрь 2024 г.', slug: '' },
+        { title: 'Forma', subtitle: 'MR Group', desc: 'Комплекс презентационных рендеров и визуальных материалов для маркетинга и продаж.', city: 'Москва', date: 'Ноябрь 2024 г.', slug: '' },
+        { title: 'Solar', subtitle: 'Аквилон', desc: 'Подготовили визуализацию и анимационные материалы для продвижения жилого проекта.', city: 'Санкт-Петербург', date: 'Октябрь 2024 г.', slug: '' },
+        { title: 'Riva', subtitle: 'Dogma', desc: 'Создали серию материалов для презентации объекта инвесторам и маркетинговой команды.', city: 'Казань', date: 'Сентябрь 2024 г.', slug: '' }
     ];
 
     let currentIndex = -1;
@@ -356,6 +434,7 @@ function initPinnedPortfolio() {
         }
 
         currentIndex = index;
+        card.dataset.currentIndex = index; // для клика по карточке
 
         gsap.killTweensOf([titleEl, subtitleEl, descEl, cityEl, dateEl]);
 
