@@ -1,4 +1,10 @@
     (() => {
+        // Компенсируем fixed header — отступ у <main>
+        document.addEventListener('DOMContentLoaded', () => {
+            const headerEl = document.querySelector('.header');
+            const mainEl = document.querySelector('main');
+            if (headerEl && mainEl) mainEl.style.paddingTop = headerEl.offsetHeight + 'px';
+        });
     const form = document.getElementById("request-form");
     if (!form) return;
 
