@@ -3878,6 +3878,11 @@
         transform: none !important;
     }
 
+    .main-stat .digit {
+        transform: none !important;
+        clip-path: none !important;
+    }
+
     .main-stat h3 {
         font-size: 80px;
     }
