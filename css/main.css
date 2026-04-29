@@ -3873,10 +3873,10 @@
         max-width: none;
     }
 
-    /*.main-stat {*/
-    /*    opacity: 1 !important;*/
-    /*    transform: none !important;*/
-    /*}*/
+    .main-stat {
+        opacity: 1 !important;
+        transform: none !important;
+    }
 
     /*.main-stat .digit {*/
     /*    transform: none !important;*/
@@ -3885,6 +3885,11 @@
 
     .main-stat h3 {
         font-size: 80px;
+        line-height: normal;
+    }
+
+    .main-stat .digit {
+        line-height: 1;
     }
 
     #heroStatMid h3,
