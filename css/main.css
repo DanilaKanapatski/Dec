@@ -137,6 +137,7 @@
 /* Цифры разбиты на символы через JS для поэффектного появления */
 .main-stat h3 .digit {
     display: inline-block;
+    line-height: 1;
     overflow: hidden; /* нужен для clip-path reveal */
 }
 
@@ -3897,6 +3898,11 @@
 
     .main-stat h3 {
         margin-top: 0;
+        margin-left: -8px;
+    }
+
+    .main-counter-badge {
+        margin-left: 0;
     }
 
 

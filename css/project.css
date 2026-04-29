@@ -465,6 +465,9 @@
 
     .project-sections-nav {
         bottom: 24px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
     }
 
     /* CONTENT */
