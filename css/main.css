@@ -3885,7 +3885,7 @@
 
     .main-stat h3 {
         font-size: 80px;
-        line-height: normal;
+        line-height: 1.3;
     }
 
     .main-stat .digit {
