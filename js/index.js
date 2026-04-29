@@ -140,7 +140,7 @@ function initHeroScene() {
 
 
 function initStatsAnimation() {
-    if (!window.gsap || !window.ScrollTrigger) return;
+    if (!window.gsap) return;
 
     const bigStat   = document.getElementById('heroStatBig');
     const midStat   = document.getElementById('heroStatMid');
@@ -148,16 +148,7 @@ function initStatsAnimation() {
 
     if (!bigStat || !midStat || !smallStat) return;
 
-    /*
-      ПРАВИЛЬНАЯ логика появления (как в видео):
-      — Отдельный ScrollTrigger на каждый стат-блок.
-      — Срабатывает когда ЭТОТ конкретный блок входит в viewport (bottom 90%).
-      — 1519 (строка 1 грида) появляется первым.
-      — 211 и 57 (строка 2 грида) появляются позже при скролле,
-        211 — сразу, 57 — через 0.25s (sequential внутри одной строки).
-      — Анимация: badge fade + clip-path reveal числа + fade подписи.
-    */
-
+    // Та же анимация что и на десктопе
     function animateStat(stat, delay) {
         const h3    = stat.querySelector('h3');
         const badge = stat.querySelector('.main-counter-badge');
@@ -166,14 +157,13 @@ function initStatsAnimation() {
         if (badge) gsap.to(badge, { opacity: 1, y: 0, duration: 0.45, delay, ease: 'power2.out' });
 
         if (h3) {
-            // Разбиваем число на отдельные символы-спаны для поэффектного появления
             const digits = h3.querySelectorAll('.digit');
             if (digits.length) {
                 gsap.to(digits, {
                     clipPath: 'inset(0% 0 0 0)',
                     y: 0,
                     duration: 0.55,
-                    stagger: 0.08,   // каждая цифра с задержкой от предыдущей
+                    stagger: 0.08,
                     delay: delay + 0.08,
                     ease: 'power3.out'
                 });
@@ -183,21 +173,18 @@ function initStatsAnimation() {
         if (p) gsap.to(p, { opacity: 1, duration: 0.4, delay: delay + 0.5, ease: 'power2.out' });
     }
 
-    // Разбиваем числа на <span class="digit"> до того как GSAP установит clipPath
     function splitDigits(stat) {
         const h3 = stat.querySelector('h3');
-        if (!h3 || h3.querySelector('.digit')) return; // уже разбито
+        if (!h3 || h3.querySelector('.digit')) return;
         const text = h3.textContent.trim();
         h3.innerHTML = text.split('').map(ch =>
             `<span class="digit">${ch}</span>`
         ).join('');
-        // Скрываем все символы
         gsap.set(h3.querySelectorAll('.digit'), { clipPath: 'inset(110% 0 0 0)', y: 40 });
     }
 
-    // Стартовое состояние — всё скрыто, числа разбиты на символы
     [bigStat, midStat, smallStat].forEach(stat => {
-        splitDigits(stat);   // разбиваем цифру на span-символы
+        splitDigits(stat);
         const badge = stat.querySelector('.main-counter-badge');
         const p     = stat.querySelector('p');
         gsap.set(stat, { opacity: 1 });
@@ -205,7 +192,39 @@ function initStatsAnimation() {
         if (p)     gsap.set(p, { opacity: 0 });
     });
 
-    // 1519 — свой триггер, появляется когда он входит в viewport
+    // На мобилке используем IntersectionObserver вместо ScrollTrigger —
+    // он не зависит от прыгающего window.innerHeight в Safari iOS
+    const isMobile = window.innerWidth <= 767;
+
+    if (isMobile) {
+        const fired = new Set();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting || fired.has(entry.target)) return;
+                fired.add(entry.target);
+
+                if (entry.target === bigStat) {
+                    animateStat(bigStat, 0);
+                } else if (entry.target === midStat) {
+                    animateStat(midStat, 0);
+                    animateStat(smallStat, 0.25);
+                }
+            });
+        }, {
+            // rootMargin: низ элемента должен войти на 10% в viewport
+            rootMargin: '0px 0px -10% 0px',
+            threshold: 0
+        });
+
+        observer.observe(bigStat);
+        observer.observe(midStat);
+        return;
+    }
+
+    // Десктоп / планшет — ScrollTrigger как прежде
+    if (!window.ScrollTrigger) return;
+
     ScrollTrigger.create({
         trigger: bigStat,
         start: 'top 88%',
@@ -213,14 +232,13 @@ function initStatsAnimation() {
         onEnter: () => animateStat(bigStat, 0)
     });
 
-    // 211 — триггер когда ОН входит в viewport (строка 2 грида — ниже 1519)
     ScrollTrigger.create({
         trigger: midStat,
         start: 'top 92%',
         once: true,
         onEnter: () => {
-            animateStat(midStat, 0);          // 211 — сразу
-            animateStat(smallStat, 0.25);     // 57  — через 0.25s
+            animateStat(midStat, 0);
+            animateStat(smallStat, 0.25);
         }
     });
 }
