@@ -3838,7 +3838,7 @@
 
     .stats-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-rows: auto auto auto;
         row-gap: 24px;
         column-gap: 0;
     }

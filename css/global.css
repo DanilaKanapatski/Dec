@@ -403,6 +403,11 @@ body.gallery-open {
     height: 100%;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body.gallery-open .page-wrapper,
 body.gallery-open .page-scale {
     overflow: hidden;
