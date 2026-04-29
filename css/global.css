@@ -35,7 +35,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-text-fill-color: var(--color-main-white);
-    -webkit-box-shadow: 0 0 0 1000px transparent inset;
+    -webkit-box-shadow: 0 0 0 100px var(--color-main-decard) inset !important;
     box-shadow: 0 0 0 1000px transparent inset;
     border-bottom: 1px solid var(--color-main-white);
     background-color: transparent;
