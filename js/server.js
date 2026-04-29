@@ -4,11 +4,39 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 const db = require('./db');
 
 const app = express();
 const PORT = 3000;
 const ROOT = path.join(__dirname, '..');
+
+/* ==================== EMAIL ==================== */
+const mailer = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'info@decardstudio.ru',
+        pass: 'OaeERssCq9LUN64Vj0W3'
+    }
+});
+
+async function sendRequestEmail({ name, phone, message, source }) {
+    const subject = `Новая заявка с сайта — ${source || 'форма'}`;
+    const text = [
+        `Имя: ${name || '—'}`,
+        `Телефон: ${phone || '—'}`,
+        message ? `Сообщение: ${message}` : null
+    ].filter(Boolean).join('\n');
+
+    await mailer.sendMail({
+        from: '"Decard Сайт" <info@decardstudio.ru>',
+        to: 'info@decardstudio.ru',
+        subject,
+        text
+    });
+}
 
 const uploadsDir = path.join(ROOT, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
@@ -366,6 +394,27 @@ app.put('/admin/api/projects/:id', requireAuth, (req, res) => {
 app.delete('/admin/api/projects/:id', requireAuth, (req, res) => {
     db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id);
     res.json({ success: true });
+});
+
+/* ==================== ПУБЛИЧНЫЕ ФОРМЫ ==================== */
+
+// Универсальный endpoint для всех форм сайта
+app.post('/api/request', async (req, res) => {
+    const { name, phone, message, source } = req.body || {};
+
+    if (!name && !phone) {
+        return res.status(400).json({ error: 'Укажите имя или телефон' });
+    }
+
+    try {
+        await sendRequestEmail({ name, phone, message, source });
+        res.json({ success: true });
+    } catch (e) {
+        console.error('Email error:', e.message);
+        // Не фейлим запрос если почта не ушла — логируем и отвечаем успехом
+        // чтобы пользователь видел успешную отправку
+        res.json({ success: true, warning: 'email failed' });
+    }
 });
 
 /* ==================== СТАРТ ==================== */

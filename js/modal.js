@@ -162,7 +162,7 @@
     nameInput.addEventListener("blur", validateName);
     phoneInput.addEventListener("blur", validatePhone);
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const validName = validateName();
@@ -173,15 +173,25 @@
 
         submitBtn.disabled = true;
 
-        setTimeout(() => {
-            form.reset();
-            submitBtn.disabled = false;
+        try {
+            await fetch("/api/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: nameInput.value.trim(),
+                    phone: phoneInput.value.trim(),
+                    source: "Модальное окно"
+                })
+            });
+        } catch (err) {
+            console.error("Request send error:", err);
+        }
 
-            nameField.classList.remove("is-filled");
-            phoneField.classList.remove("is-filled");
-
-            alert("Заявка отправлена");
-        }, 500);
+        form.reset();
+        submitBtn.disabled = false;
+        nameField.classList.remove("is-filled");
+        phoneField.classList.remove("is-filled");
+        alert("Заявка отправлена");
     });
 
 })();

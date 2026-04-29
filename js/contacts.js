@@ -154,7 +154,8 @@
 },
     body: JSON.stringify({
     name: nameInput.value.trim(),
-    phone: phoneInput.value.trim()
+    phone: phoneInput.value.trim(),
+    source: "Страница контактов"
 })
 });
 

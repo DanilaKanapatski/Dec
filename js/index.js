@@ -226,18 +226,15 @@ function initStatsAnimation() {
             entries.forEach(entry => {
                 if (!entry.isIntersecting || fired.has(entry.target)) return;
                 fired.add(entry.target);
-
-                if (entry.target === bigStat) {
-                    animateStatMobile(bigStat, 0);
-                } else if (entry.target === midStat) {
-                    animateStatMobile(midStat, 0);
-                    animateStatMobile(smallStat, 0.2);
-                }
+                // Каждый элемент анимируется сам когда входит в viewport —
+                // порядок определяется CSS (big→small→mid)
+                animateStatMobile(entry.target, 0);
             });
         }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
 
         observer.observe(bigStat);
-        observer.observe(midStat);
+        observer.observe(smallStat);  // row 2 в CSS — входит 2-м
+        observer.observe(midStat);    // row 3 в CSS — входит 3-м
         return;
     }
 
