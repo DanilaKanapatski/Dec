@@ -3890,7 +3890,6 @@
 
     .main-stat .digit {
         line-height: normal;
-        vertical-align: bottom;
     }
 
     #heroStatMid h3,
@@ -3908,7 +3907,7 @@
     }
 
     .main-stat h3 {
-        margin-top: -6px;
+        margin-top: 0;
         margin-left: -8px;
     }
 

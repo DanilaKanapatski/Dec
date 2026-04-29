@@ -199,23 +199,42 @@ function initStatsAnimation() {
     if (isMobile) {
         const fired = new Set();
 
+        // На мобилке анимируем h3 целиком (не по цифрам) —
+        // избегаем бага iOS с overflow:hidden + clip-path на inline-block спанах
+        [bigStat, midStat, smallStat].forEach(stat => {
+            const h3 = stat.querySelector('h3');
+            // Убираем разбивку на .digit и сбрасываем GSAP inline-стили
+            if (h3) {
+                const text = Array.from(h3.querySelectorAll('.digit'))
+                    .map(d => d.textContent).join('');
+                if (text) h3.textContent = text; // возвращаем как обычный текст
+                gsap.set(h3, { opacity: 0, y: 30 });
+            }
+        });
+
+        function animateStatMobile(stat, delay) {
+            const h3    = stat.querySelector('h3');
+            const badge = stat.querySelector('.main-counter-badge');
+            const p     = stat.querySelector('p');
+
+            if (badge) gsap.to(badge, { opacity: 1, y: 0, duration: 0.4, delay, ease: 'power2.out' });
+            if (h3)    gsap.to(h3,    { opacity: 1, y: 0, duration: 0.5, delay: delay + 0.1, ease: 'power3.out' });
+            if (p)     gsap.to(p,     { opacity: 1,        duration: 0.4, delay: delay + 0.45, ease: 'power2.out' });
+        }
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (!entry.isIntersecting || fired.has(entry.target)) return;
                 fired.add(entry.target);
 
                 if (entry.target === bigStat) {
-                    animateStat(bigStat, 0);
+                    animateStatMobile(bigStat, 0);
                 } else if (entry.target === midStat) {
-                    animateStat(midStat, 0);
-                    animateStat(smallStat, 0.25);
+                    animateStatMobile(midStat, 0);
+                    animateStatMobile(smallStat, 0.2);
                 }
             });
-        }, {
-            // rootMargin: низ элемента должен войти на 10% в viewport
-            rootMargin: '0px 0px -10% 0px',
-            threshold: 0
-        });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
 
         observer.observe(bigStat);
         observer.observe(midStat);
