@@ -160,7 +160,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: auto auto;
-    row-gap: 0;
+    row-gap: 80px;
     column-gap: 20px;
 }
 
@@ -168,8 +168,14 @@
     display: contents; /* дети становятся прямыми дочерями grid */
 }
 
-.main-stat--big {
+/* Два больших — каждый по 2 колонки в первой строке */
+#heroStatBig1 {
     grid-column: 1 / span 1;
+    grid-row: 1;
+}
+
+#heroStatBig2 {
+    grid-column: 2 / span 1;
     grid-row: 1;
 }
 
@@ -463,16 +469,21 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         grid-template-rows: auto auto;
-        row-gap: 0;
+        row-gap: 32px;
         column-gap: 20px;
     }
 
     .stats-small {
-        display: contents; /* дети становятся прямыми дочерями grid */
+        display: contents;
     }
 
-    .main-stat--big {
+    #heroStatBig1 {
         grid-column: 1 / span 1;
+        grid-row: 1;
+    }
+
+    #heroStatBig2 {
+        grid-column: 2 / span 1;
         grid-row: 1;
     }
 
@@ -633,9 +644,6 @@
 }
 
 
-
-
-
 /* PINNED PORTFOLIO */
 .featured-portfolio {
     margin-top: 150px;
@@ -774,7 +782,7 @@
     height: 100%;
     display: block;
     object-fit: cover;
-    transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+    transition: transform 0.4s cubic-bezier(.4, 0, .2, 1);
 }
 
 /* Hover: zoom preview image 10% when hovering the whole card */
@@ -858,7 +866,6 @@
     /*.featured-portfolio__stage {*/
     /*    --fp-stage-height: 680px;*/
     /*}*/
-
     .featured-portfolio__card {
         width: min(728px, calc(100% - 40px));
         grid-template-columns: 150px 1fr 150px;
@@ -1124,9 +1131,8 @@
     z-index: 1;
     opacity: 0;
     transform: translateY(40px); /* старт ниже */
-    transition:
-            transform .5s cubic-bezier(.22, 1, .36, 1),
-            opacity .25s ease;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1),
+    opacity .25s ease;
     /*visibility: hidden;*/
     /*transition: opacity .18s ease, visibility 0s linear .18s;*/
 }
@@ -1182,7 +1188,7 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 140%;
-    color: rgba(255,255,255,.6);
+    color: rgba(255, 255, 255, .6);
 }
 
 .service-row__btn {
@@ -1430,9 +1436,8 @@
         z-index: 1;
         opacity: 0;
         transform: translateY(40px); /* старт ниже */
-        transition:
-                transform .5s cubic-bezier(.22, 1, .36, 1),
-                opacity .25s ease;
+        transition: transform .5s cubic-bezier(.22, 1, .36, 1),
+        opacity .25s ease;
         /*visibility: hidden;*/
         /*transition: opacity .18s ease, visibility 0s linear .18s;*/
     }
@@ -1489,7 +1494,7 @@
         font-weight: 400;
         font-size: 12px;
         line-height: 140%;
-        color: rgba(255,255,255,.6);
+        color: rgba(255, 255, 255, .6);
     }
 
     .service-row__btn {
@@ -1618,7 +1623,6 @@
     .service-row--special.is-active .service-row__body {
         padding-top: 0;
     }
-
 
 
 }
@@ -1864,7 +1868,7 @@
         font-weight: 400;
         font-size: 12px;
         line-height: 140%;
-        color: rgba(255,255,255,.6);
+        color: rgba(255, 255, 255, .6);
     }
 
     .service-row__btn {
@@ -2204,7 +2208,6 @@
 
     /* special */
     /* ===== special mobile / desktop switch ===== */
-
     .service-row__special-layout-mobile {
         display: none;
     }
@@ -2786,9 +2789,7 @@
     }
 
     /*advantages*/
-
     /* advantages — desktop */
-
     .advantages {
         margin-top: 200px;
         overflow: clip;
@@ -2954,7 +2955,6 @@
     }
 
     /*request*/
-
     .request {
         padding: 60px 0 32px 0;
         background: var(--color-main-decard);
@@ -3178,7 +3178,6 @@
 
 @media screen and (max-width: 1100px) {
     /*advantages*/
-
     .advantages {
         margin-top: 71px;
     }
@@ -3211,9 +3210,6 @@
     .adv-card--4 {
         margin-top: 60px;
     }
-
-
-
 
 
     .adv-card {
@@ -3337,7 +3333,6 @@
     }
 
     /*request*/
-
     .request {
         padding: 32px 0 32px 0;
         background: var(--color-main-decard);
@@ -3584,7 +3579,7 @@
 
     .main-panel--left {
         grid-column: 1;
-        padding: 32px 20px 0 20px ;
+        padding: 32px 20px 0 20px;
         clip-path: polygon(
                 0 0,
                 76% 0,
@@ -3614,11 +3609,16 @@
     }
 
     .stats-small {
-        display: contents; /* дети становятся прямыми дочерями grid */
+        display: contents;
     }
 
-    .main-stat--big {
+    #heroStatBig1 {
         grid-column: 1 / span 2;
+        grid-row: 1;
+    }
+
+    #heroStatBig2 {
+        grid-column: 3 / span 2;
         grid-row: 1;
     }
 
@@ -3629,7 +3629,7 @@
 
     #heroStatSmall {
         grid-column: 3 / span 2;
-        grid-row: 1;
+        grid-row: 2;
     }
 
     .main-panel__top {
@@ -3834,20 +3834,25 @@
 
     /* stats на мобилке — вертикально */
     .stats-section {
-        padding: 110px 0 0 0;
+        padding: 85px 0 0 0;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
         row-gap: 24px;
-        column-gap: 0;
+        column-gap: 20px;
     }
 
-    /* сбрасываем десктопную раскладку: большая — во всю ширину,
-       мелкие остаются в своём .stats-small гриде */
-    .main-stat--big {
-        grid-column: 1 / -1;
+    /* На мобилке: 2 колонки, 2 строки — все 4 цифры по 2 в ряд */
+    #heroStatBig1 {
+        grid-column: 1 / 2;
+        grid-row: 1;
+        max-width: none;
+    }
+
+    #heroStatBig2 {
+        grid-column: 2 / 3;
         grid-row: 1;
         max-width: none;
     }
@@ -3858,13 +3863,13 @@
         grid-row: auto;
     }
 
-    #heroStatMid {
-        grid-column: 1 / -1;
-        grid-row: 3;
+    #heroStatSmall {
+        grid-column: 2 / 3;
+        grid-row: 2;
     }
 
-    #heroStatSmall {
-        grid-column: 1 / -1;
+    #heroStatMid {
+        grid-column: 1 / 2;;
         grid-row: 2;
     }
 
@@ -3883,9 +3888,8 @@
     /*    transform: none !important;*/
     /*    clip-path: none !important;*/
     /*}*/
-
     .main-stat h3 {
-        font-size: 80px;
+        font-size: 64px;
         line-height: normal;
     }
 
@@ -3895,12 +3899,31 @@
 
     #heroStatMid h3,
     #heroStatSmall h3 {
-        font-size: 80px;
+        font-size: 64px;
     }
 
     .main-stat p {
-        padding-bottom: 11px;
+        padding-bottom: 0;
         margin-top: 10px;
+    }
+
+    #heroStatSmall p {
+        padding-bottom: 20px;
+    }
+
+    #heroStatMid p {
+        max-width: 95%;
+        width: 100%;
+    }
+
+
+    #heroStatBig2 p {
+        padding-bottom: 20px;
+    }
+
+    #heroStatBig1 p {
+        max-width: 95%;
+        width: 100%;
     }
 
     .main-stat::after {
@@ -3909,7 +3932,7 @@
 
     .main-stat h3 {
         margin-top: 0;
-        margin-left: -8px;
+        /*margin-left: -8px;*/
     }
 
     .main-counter-badge {
@@ -3946,7 +3969,6 @@
     }
 
     /*advantages*/
-
     .advantages {
         margin-top: 80px;
     }
@@ -4070,7 +4092,6 @@
     }
 
     /*request*/
-
     .request {
         padding: 32px 0 20px 0;
         background: var(--color-main-decard);
@@ -4296,13 +4317,19 @@
     }
 
     .main-stat::after {
-        max-width: 295px;
+        max-width: 354px;
     }
+
     /*.main-desc {*/
     /*    max-width: 260px;*/
     /*}*/
-
     /*.main-panel--right {*/
     /*    clip-path: polygon(0 60px, 49% 60px, 49% 0, 100% 0, 100% 100%, 0 100%);*/
     /*}*/
+}
+
+@media screen and (max-width: 767px) {
+    .main-stat::after {
+        max-width: 158px;
+    }
 }

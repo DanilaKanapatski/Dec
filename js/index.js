@@ -144,11 +144,12 @@ function initHeroScene() {
 function initStatsAnimation() {
     if (!window.gsap) return;
 
-    const bigStat   = document.getElementById('heroStatBig');
+    const bigStat   = document.getElementById('heroStatBig1');
+    const bigStat2  = document.getElementById('heroStatBig2');
     const midStat   = document.getElementById('heroStatMid');
     const smallStat = document.getElementById('heroStatSmall');
 
-    if (!bigStat || !midStat || !smallStat) return;
+    if (!bigStat || !bigStat2 || !midStat || !smallStat) return;
 
     // Та же анимация что и на десктопе
     function animateStat(stat, delay) {
@@ -185,7 +186,7 @@ function initStatsAnimation() {
         gsap.set(h3.querySelectorAll('.digit'), { clipPath: 'inset(110% 0 0 0)', y: 40 });
     }
 
-    [bigStat, midStat, smallStat].forEach(stat => {
+    [bigStat, bigStat2, midStat, smallStat].forEach(stat => {
         splitDigits(stat);
         const badge = stat.querySelector('.main-counter-badge');
         const p     = stat.querySelector('p');
@@ -203,7 +204,7 @@ function initStatsAnimation() {
 
         // На мобилке анимируем h3 целиком (не по цифрам) —
         // избегаем бага iOS с overflow:hidden + clip-path на inline-block спанах
-        [bigStat, midStat, smallStat].forEach(stat => {
+        [bigStat, bigStat2, midStat, smallStat].forEach(stat => {
             const h3 = stat.querySelector('h3');
             // Убираем разбивку на .digit и сбрасываем GSAP inline-стили
             if (h3) {
@@ -234,9 +235,11 @@ function initStatsAnimation() {
             });
         }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
 
-        observer.observe(bigStat);
-        observer.observe(smallStat);  // row 2 в CSS — входит 2-м
-        observer.observe(midStat);    // row 3 в CSS — входит 3-м
+        // Порядок по визуальному расположению в CSS сетке (row1→row2)
+        observer.observe(bigStat);    // row 1, col 1
+        observer.observe(bigStat2);   // row 1, col 2
+        observer.observe(smallStat);  // row 2, col 1
+        observer.observe(midStat);    // row 2, col 2
         return;
     }
 
@@ -247,7 +250,10 @@ function initStatsAnimation() {
         trigger: bigStat,
         start: 'top 88%',
         once: true,
-        onEnter: () => animateStat(bigStat, 0)
+        onEnter: () => {
+            animateStat(bigStat, 0);
+            animateStat(bigStat2, 0.15);
+        }
     });
 
     ScrollTrigger.create({
