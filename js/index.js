@@ -1,6 +1,7 @@
 let lenis = null;
 let heroBigCounterAnimated = false;
 let heroSmallCountersAnimated = false;
+window.__lenis = lenis; // добавь эту строку
 
 document.addEventListener('DOMContentLoaded', () => {
     initCoreLibs();

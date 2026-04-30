@@ -196,24 +196,30 @@
 
 })();
 
-// Плавная прокрутка к секции после загрузки страницы с хэшем
 (function () {
-    const hash = window.location.hash; // например "#services"
+    const hash = window.location.hash;
     if (!hash) return;
 
-    // 1. Убираем хэш из URL без перезагрузки, чтобы браузер не прыгал
     history.replaceState(null, '', window.location.pathname);
-
-    // 2. Принудительно скроллим наверх — до инициализации анимаций
     window.scrollTo(0, 0);
 
-    // 3. Ждём, пока анимации и контент инициализируются, затем прокручиваем
     window.addEventListener('load', () => {
-        setTimeout(() => {
-            const target = document.querySelector(hash);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 700); // подбери задержку под скорость твоих анимаций (100–600мс)
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const target = document.querySelector(hash);
+                    if (!target) return;
+
+                    // Используем lenis если он инициализирован — он есть у тебя глобально
+                    if (window.__lenis) {
+                        window.__lenis.scrollTo(target, { duration: 1.5, easing: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t });
+                    } else {
+                        // fallback — вручную через window.scrollTo с анимацией
+                        const top = target.getBoundingClientRect().top + window.pageYOffset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                }, 500);
+            });
+        });
     });
 })();
