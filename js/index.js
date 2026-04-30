@@ -1,7 +1,6 @@
 let lenis = null;
 let heroBigCounterAnimated = false;
 let heroSmallCountersAnimated = false;
-window.__lenis = lenis; // добавь эту строку
 
 document.addEventListener('DOMContentLoaded', () => {
     initCoreLibs();
@@ -48,6 +47,8 @@ function initCoreLibs() {
         touchMultiplier: 1.05,
         infinite: false
     });
+
+    window.__lenis = lenis; // теперь присваиваем после реального создания
 
     lenis.on('scroll', ScrollTrigger.update);
 

@@ -203,6 +203,26 @@
     history.replaceState(null, '', window.location.pathname);
     window.scrollTo(0, 0);
 
+    // Плавная анимация скролла вручную (работает везде включая iOS Safari)
+    function smoothScrollTo(target, duration) {
+        const startY = window.pageYOffset;
+        const endY = target.getBoundingClientRect().top + startY;
+        const startTime = performance.now();
+
+        function easeInOut(t) {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        }
+
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            window.scrollTo(0, startY + (endY - startY) * easeInOut(progress));
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    }
+
     window.addEventListener('load', () => {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -210,13 +230,15 @@
                     const target = document.querySelector(hash);
                     if (!target) return;
 
-                    // Используем lenis если он инициализирован — он есть у тебя глобально
                     if (window.__lenis) {
-                        window.__lenis.scrollTo(target, { duration: 1.5, easing: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t });
+                        // Десктоп — через Lenis
+                        window.__lenis.scrollTo(target, {
+                            duration: 1.5,
+                            easing: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t
+                        });
                     } else {
-                        // fallback — вручную через window.scrollTo с анимацией
-                        const top = target.getBoundingClientRect().top + window.pageYOffset;
-                        window.scrollTo({ top, behavior: 'smooth' });
+                        // Мобилка — ручная плавная анимация 1.2 сек
+                        smoothScrollTo(target, 1200);
                     }
                 }, 500);
             });
