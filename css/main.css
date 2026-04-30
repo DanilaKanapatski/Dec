@@ -996,7 +996,8 @@
 }
 
 .services {
-    margin-top: 200px;
+    margin-top: 149px;
+    padding-top: 51px;
 }
 
 .services-title {
@@ -1309,7 +1310,7 @@
 
 @media screen and (max-width: 1919px) {
     .services {
-        margin-top: 150px;
+        margin-top: 99px;
     }
 
     .services-title {
@@ -1691,7 +1692,7 @@
     }
 
     .services {
-        margin-top: 100px;
+        margin-top: 49px;
     }
 
     .services-title {
@@ -2038,7 +2039,7 @@
 
 @media (max-width: 767px) {
     .services {
-        margin-top: 80px;
+        margin-top: 29px;
     }
 
     .services-title {

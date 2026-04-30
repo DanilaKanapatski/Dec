@@ -195,3 +195,25 @@
     });
 
 })();
+
+(function () {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    history.replaceState(null, '', window.location.pathname);
+    window.scrollTo(0, 0);
+
+    window.addEventListener('load', () => {
+        // Ждём следующий тик после load — GSAP к этому моменту уже инициализирован
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const target = document.querySelector(hash);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 500);
+            });
+        });
+    });
+})();
