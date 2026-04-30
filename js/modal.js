@@ -196,24 +196,24 @@
 
 })();
 
+// Плавная прокрутка к секции после загрузки страницы с хэшем
 (function () {
-    const hash = window.location.hash;
+    const hash = window.location.hash; // например "#services"
     if (!hash) return;
 
+    // 1. Убираем хэш из URL без перезагрузки, чтобы браузер не прыгал
     history.replaceState(null, '', window.location.pathname);
+
+    // 2. Принудительно скроллим наверх — до инициализации анимаций
     window.scrollTo(0, 0);
 
+    // 3. Ждём, пока анимации и контент инициализируются, затем прокручиваем
     window.addEventListener('load', () => {
-        // Ждём следующий тик после load — GSAP к этому моменту уже инициализирован
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    const target = document.querySelector(hash);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 500);
-            });
-        });
+        setTimeout(() => {
+            const target = document.querySelector(hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 700); // подбери задержку под скорость твоих анимаций (100–600мс)
     });
 })();
