@@ -238,7 +238,7 @@
                         });
                     } else {
                         // Мобилка — ручная плавная анимация 1.2 сек
-                        smoothScrollTo(target, 1200);
+                        smoothScrollTo(target, 1600);
                     }
                 }, 500);
             });
