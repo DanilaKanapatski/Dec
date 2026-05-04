@@ -47,6 +47,8 @@ CREATE TABLE IF NOT EXISTS projects (
     tour_src TEXT DEFAULT '',
     presentation_src TEXT DEFAULT '',
     short_desc TEXT DEFAULT '',
+    video_duration TEXT DEFAULT '',
+    time_of_day TEXT DEFAULT '',
     exterior_renders TEXT DEFAULT '[]',
     interior_renders TEXT DEFAULT '[]',
     next_project_id INTEGER DEFAULT 0,
@@ -78,6 +80,12 @@ if (!projCols.includes('presentation_src')) {
 }
 if (!projCols.includes('short_desc')) {
     db.exec(`ALTER TABLE projects ADD COLUMN short_desc TEXT DEFAULT ''`);
+}
+if (!projCols.includes('video_duration')) {
+    db.exec(`ALTER TABLE projects ADD COLUMN video_duration TEXT DEFAULT ''`);
+}
+if (!projCols.includes('time_of_day')) {
+    db.exec(`ALTER TABLE projects ADD COLUMN time_of_day TEXT DEFAULT ''`);
 }
 
 // админ

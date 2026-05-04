@@ -120,14 +120,24 @@
             if ((item.city || '') !== f.city) return false;
         }
 
-        // Сезон (мульти-теги)
-        if (f.seasons && f.seasons.length) {
-            if (!f.seasons.includes(item.season)) return false;
-        }
-
         // Год (мульти-теги)
         if (f.years && f.years.length) {
             if (!f.years.includes(String(item.year))) return false;
+        }
+
+        // Время года (AND — оба условия должны совпасть если оба выбраны)
+        if (f.seasons && f.seasons.length) {
+            if (!f.seasons.includes(item.season || '')) return false;
+        }
+
+        // Время суток (AND с сезоном)
+        if (f.time_of_day && f.time_of_day.length) {
+            if (!f.time_of_day.includes(item.time_of_day || '')) return false;
+        }
+
+        // Продолжительность видео
+        if (f.video_duration && f.video_duration !== 'Все') {
+            if ((item.video_duration || '') !== f.video_duration) return false;
         }
 
         // Поиск
@@ -151,7 +161,7 @@
     }
 
     function applyFilters() {
-        const f = window.__portfolioFilters || { service: 'Все', city: 'Все', seasons: [], years: [], search: '' };
+        const f = window.__portfolioFilters || { service: 'Все', city: 'Все', seasons: [], years: [], time_of_day: [], video_duration: 'Все', search: '' };
         filteredProjects = allProjects.filter(item => passesFilters(item, f));
 
         renderedCount = 0;
@@ -193,7 +203,7 @@
         populateDynamicFilters(allProjects);
     }
 
-    // Динамически заполняем фильтры по городу и году из данных проектов
+    // Динамически заполняем фильтры по городу, году и продолжительности видео
     function populateDynamicFilters(projects) {
         // Города
         const cityMenuEl = document.querySelector('.filter-select[data-filter="city"] .filter-select__menu');
@@ -246,14 +256,31 @@
                 btn.className = 'filter-tag';
                 btn.dataset.value = year;
                 btn.textContent = year;
-                btn.addEventListener('click', () => {
-                    btn.classList.toggle('is-active');
-                    const f = window.__portfolioFilters;
-                    f.years = [...yearTagsEl.querySelectorAll('.filter-tag.is-active')].map(b => b.dataset.value);
-                    if (typeof window.__applyPortfolioFilters === 'function') window.__applyPortfolioFilters();
-                });
                 yearTagsEl.appendChild(btn);
             });
+            if (typeof window.__bindTagGroup === 'function') window.__bindTagGroup(yearTagsEl);
+        }
+
+        // Продолжительность видео (динамически из данных)
+        const durMenuEl = document.querySelector('.filter-select[data-filter="video_duration"] .filter-select__menu');
+        if (durMenuEl) {
+            const durations = [...new Set(projects.map(p => p.video_duration).filter(Boolean))].sort();
+            const allBtn = durMenuEl.querySelector('[data-value="Все"]');
+            durMenuEl.innerHTML = '';
+            if (allBtn) durMenuEl.appendChild(allBtn);
+            durations.forEach(dur => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'filter-select__option';
+                btn.dataset.value = dur;
+                btn.textContent = dur;
+                durMenuEl.appendChild(btn);
+            });
+            // Переинициализируем select после заполнения
+            const durSelect = document.querySelector('.filter-select[data-filter="video_duration"]');
+            if (durSelect && typeof window.__initFilterSelect === 'function') {
+                window.__initFilterSelect(durSelect);
+            }
         }
     }
 

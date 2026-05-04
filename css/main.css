@@ -4320,9 +4320,9 @@
         grid-column: 1 / span 2;
     }
 
-    .main-stat::after {
-        max-width: 354px;
-    }
+    /*.main-stat::after {*/
+    /*    max-width: 354px;*/
+    /*}*/
 
     /*.main-desc {*/
     /*    max-width: 260px;*/
@@ -4333,7 +4333,7 @@
 }
 
 @media screen and (max-width: 767px) {
-    .main-stat::after {
-        max-width: 158px;
-    }
+    /*.main-stat::after {*/
+    /*    max-width: 158px;*/
+    /*}*/
 }

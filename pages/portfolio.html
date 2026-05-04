@@ -309,29 +309,22 @@
                                           stroke="white" stroke-linecap="square" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-
-                            <input
-                                    type="text"
-                                    class="portfolio-search-input"
-                                    id="portfolio-search-input"
-                                    placeholder="Поиск"
-                                    autocomplete="off"
-                            >
+                            <input type="text" class="portfolio-search-input" id="portfolio-search-input" placeholder="Поиск" autocomplete="off">
                         </div>
 
                         <div class="filter-wrapper">
+
+                            <!-- УСЛУГИ — всегда -->
                             <div class="filter-select" data-filter="service">
                                 <span class="filter-select__label">Услуги</span>
-
                                 <button class="filter-select__trigger" type="button">
                                     <span class="filter-select__value" data-default="Все">Все</span>
                                     <svg class="filter-select__arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.707031 0.707092L5.70703 5.70709L10.707 0.707092" stroke="white" stroke-linecap="square"/>
                                     </svg>
                                 </button>
-
                                 <div class="filter-select__menu">
-                                    <button type="button" class="filter-select__option" data-value="Все">Все</button>
+                                    <button type="button" class="filter-select__option is-active" data-value="Все">Все</button>
                                     <button type="button" class="filter-select__option" data-value="Рендеры экстерьера">Рендеры экстерьера</button>
                                     <button type="button" class="filter-select__option" data-value="Рендеры интерьера">Рендеры интерьера</button>
                                     <button type="button" class="filter-select__option" data-value="3D-ролики">3D-ролики</button>
@@ -340,25 +333,41 @@
                                 </div>
                             </div>
 
+                            <!-- ГОРОД — всегда -->
                             <div class="filter-select" data-filter="city">
                                 <span class="filter-select__label">Город</span>
-
                                 <button class="filter-select__trigger" type="button">
                                     <span class="filter-select__value" data-default="Все">Все</span>
                                     <svg class="filter-select__arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M0.707031 0.707092L5.70703 5.70709L10.707 0.707092" stroke="white" stroke-linecap="square"/>
                                     </svg>
                                 </button>
-
                                 <div class="filter-select__menu">
-                                    <button type="button" class="filter-select__option" data-value="Все">Все</button>
-                                    <button type="button" class="filter-select__option" data-value="Москва">Москва</button>
-                                    <button type="button" class="filter-select__option" data-value="Санкт-Петербург">Санкт-Петербург</button>
-                                    <button type="button" class="filter-select__option" data-value="Казань">Казань</button>
+                                    <button type="button" class="filter-select__option is-active" data-value="Все">Все</button>
+                                    <!-- города заполняются динамически -->
                                 </div>
                             </div>
 
+                            <!-- ГОД — всегда, заполняется динамически -->
                             <div class="filter-block">
+                                <span>Год</span>
+                                <div class="filter-tags" data-filter-group="year">
+                                    <!-- заполняется динамически -->
+                                </div>
+                            </div>
+
+                            <!-- ВРЕМЯ СУТОК — только для рендеров -->
+                            <div class="filter-block" data-filter-visible="renders" style="display:none">
+                                <span>Время суток</span>
+                                <div class="filter-tags" data-filter-group="time_of_day">
+                                    <button type="button" class="filter-tag" data-value="День">День</button>
+                                    <button type="button" class="filter-tag" data-value="Ночь">Ночь</button>
+                                    <button type="button" class="filter-tag" data-value="Утро">Утро</button>
+                                </div>
+                            </div>
+
+                            <!-- ВРЕМЯ ГОДА — только для рендеров -->
+                            <div class="filter-block" data-filter-visible="renders" style="display:none">
                                 <span>Время года</span>
                                 <div class="filter-tags" data-filter-group="season">
                                     <button type="button" class="filter-tag" data-value="Зима">Зима</button>
@@ -368,14 +377,21 @@
                                 </div>
                             </div>
 
-                            <div class="filter-block">
-                                <span>Год</span>
-                                <div class="filter-tags" data-filter-group="year">
-                                    <button type="button" class="filter-tag" data-value="2025">2025</button>
-                                    <button type="button" class="filter-tag" data-value="2024">2024</button>
-                                    <button type="button" class="filter-tag" data-value="2023">2023</button>
+                            <!-- ПРОДОЛЖИТЕЛЬНОСТЬ ВИДЕО — только для 3D-роликов -->
+                            <div class="filter-select" data-filter="video_duration" data-filter-visible="video" style="display:none">
+                                <span class="filter-select__label">Продолжительность видео</span>
+                                <button class="filter-select__trigger" type="button">
+                                    <span class="filter-select__value" data-default="Все">Все</span>
+                                    <svg class="filter-select__arrow" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.707031 0.707092L5.70703 5.70709L10.707 0.707092" stroke="white" stroke-linecap="square"/>
+                                    </svg>
+                                </button>
+                                <div class="filter-select__menu">
+                                    <button type="button" class="filter-select__option is-active" data-value="Все">Все</button>
+                                    <!-- заполняется динамически -->
                                 </div>
                             </div>
+
                         </div>
 
                         <button class="filter-clear link-slide" type="button" id="portfolio-filter-clear">

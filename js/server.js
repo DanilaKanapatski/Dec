@@ -321,6 +321,7 @@ app.post('/admin/api/projects', requireAuth, (req, res) => {
     let {
         title, slug, cover_image, place, services, city, season, year,
         published_at, about_text, video_src, tour_src, presentation_src, short_desc,
+        video_duration, time_of_day,
         exterior_renders, interior_renders,
         next_project_id, status, sort_order
     } = req.body;
@@ -332,9 +333,10 @@ app.post('/admin/api/projects', requireAuth, (req, res) => {
         const result = db.prepare(`
             INSERT INTO projects (title, slug, cover_image, place, services, city, season, year,
                 published_at, about_text, video_src, tour_src, presentation_src, short_desc,
+                video_duration, time_of_day,
                 exterior_renders, interior_renders,
                 next_project_id, status, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             title, slug,
             cover_image || '', place || '',
@@ -342,6 +344,7 @@ app.post('/admin/api/projects', requireAuth, (req, res) => {
             city || '', season || '', parseInt(year) || 0,
             published_at || '', about_text || '', video_src || '',
             tour_src || '', presentation_src || '', short_desc || '',
+            video_duration || '', time_of_day || '',
             safeJsonStringify(exterior_renders, '[]'),
             safeJsonStringify(interior_renders, '[]'),
             parseInt(next_project_id) || 0,
@@ -358,6 +361,7 @@ app.put('/admin/api/projects/:id', requireAuth, (req, res) => {
     let {
         title, slug, cover_image, place, services, city, season, year,
         published_at, about_text, video_src, tour_src, presentation_src, short_desc,
+        video_duration, time_of_day,
         exterior_renders, interior_renders,
         next_project_id, status, sort_order
     } = req.body;
@@ -369,6 +373,7 @@ app.put('/admin/api/projects/:id', requireAuth, (req, res) => {
         db.prepare(`
             UPDATE projects SET title=?, slug=?, cover_image=?, place=?, services=?, city=?, season=?,
                 year=?, published_at=?, about_text=?, video_src=?, tour_src=?, presentation_src=?, short_desc=?,
+                video_duration=?, time_of_day=?,
                 exterior_renders=?, interior_renders=?, next_project_id=?, status=?, sort_order=?
             WHERE id = ?
         `).run(
@@ -378,6 +383,7 @@ app.put('/admin/api/projects/:id', requireAuth, (req, res) => {
             city || '', season || '', parseInt(year) || 0,
             published_at || '', about_text || '', video_src || '',
             tour_src || '', presentation_src || '', short_desc || '',
+            video_duration || '', time_of_day || '',
             safeJsonStringify(exterior_renders, '[]'),
             safeJsonStringify(interior_renders, '[]'),
             parseInt(next_project_id) || 0,

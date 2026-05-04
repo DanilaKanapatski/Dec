@@ -541,7 +541,7 @@
     }
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1250px) {
     .portfolio-block > img {
         min-width: 447px;
         width: 100%;
