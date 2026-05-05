@@ -2,14 +2,66 @@ let lenis = null;
 let heroBigCounterAnimated = false;
 let heroSmallCountersAnimated = false;
 
+/* ── Загрузка цифр с сервера ── */
+async function fetchHomepageStats() {
+    try {
+        const res = await fetch('/api/homepage-stats');
+        if (!res.ok) return;
+        const stats = await res.json();
+        const ids = ['heroStatBig1', 'heroStatBig2', 'heroStatMid', 'heroStatSmall'];
+        stats.sort((a, b) => a.sort_order - b.sort_order).forEach((s, i) => {
+            const el = document.getElementById(ids[i]);
+            if (!el) return;
+            const badge = el.querySelector('.main-counter-badge');
+            const h3    = el.querySelector('h3');
+            const p     = el.querySelector('p');
+            if (badge) badge.textContent = s.badge;
+            if (h3)    h3.textContent    = s.value;
+            if (p)     p.textContent     = s.label;
+        });
+    } catch (e) {
+        // fallback — оставляем статичные значения из HTML
+    }
+}
+
+/* ── Загрузка партнёров с сервера ── */
+async function fetchPartners() {
+    try {
+        const res = await fetch('/api/partners');
+        if (!res.ok) return;
+        const partners = await res.json();
+        if (!partners.length) return;
+
+        const track = document.getElementById('trust-marquee-track');
+        if (!track) return;
+
+        // Дублируем для бесконечного бегущего
+        const items = partners.map(p =>
+            `<div class="trust-marquee__item"><img src="${escHtml(p.logo_src)}" alt="${escHtml(p.name)}"></div>`
+        ).join('');
+        track.innerHTML = items + items;
+    } catch (e) {
+        // fallback — оставляем статичные лого из HTML
+    }
+}
+
+function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    initCoreLibs();
-    initHeroScene();
-    initHeroArrow();
-    fetchFeaturedProjects().then(() => initPinnedPortfolio());
-    initServiceRows();
-    initAdvantagesParallax();
-    initRevealSections();
+    // Сначала загружаем данные с сервера, затем инициализируем
+    Promise.all([fetchHomepageStats(), fetchPartners()]).finally(() => {
+        initCoreLibs();
+        initHeroScene();
+        initHeroArrow();
+        fetchFeaturedProjects().then(() => initPinnedPortfolio());
+        initServiceRows();
+        initAdvantagesParallax();
+        initRevealSections();
+    });
 });
 
 function initCoreLibs() {

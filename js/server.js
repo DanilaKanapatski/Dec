@@ -402,6 +402,60 @@ app.delete('/admin/api/projects/:id', requireAuth, (req, res) => {
     res.json({ success: true });
 });
 
+/* ==================== ГЛАВНАЯ: СТАТИСТИКА ==================== */
+
+// Публичный endpoint
+app.get('/api/homepage-stats', (req, res) => {
+    res.json(db.prepare('SELECT * FROM homepage_stats ORDER BY sort_order ASC').all());
+});
+
+// Админ: получить все 4 блока
+app.get('/admin/api/homepage-stats', requireAuth, (req, res) => {
+    res.json(db.prepare('SELECT * FROM homepage_stats ORDER BY sort_order ASC').all());
+});
+
+// Админ: сохранить все 4 блока разом
+app.post('/admin/api/homepage-stats', requireAuth, (req, res) => {
+    const stats = req.body; // массив [{stat_key, value, badge, label}]
+    if (!Array.isArray(stats)) return res.status(400).json({ error: 'Expected array' });
+    const upd = db.prepare('UPDATE homepage_stats SET value=?, badge=?, label=? WHERE stat_key=?');
+    stats.forEach(s => upd.run(s.value || '', s.badge || '', s.label || '', s.stat_key));
+    res.json({ success: true });
+});
+
+/* ==================== ГЛАВНАЯ: ПАРТНЁРЫ ==================== */
+
+// Публичный endpoint
+app.get('/api/partners', (req, res) => {
+    res.json(db.prepare('SELECT * FROM partners ORDER BY sort_order ASC').all());
+});
+
+// Админ: получить список
+app.get('/admin/api/partners', requireAuth, (req, res) => {
+    res.json(db.prepare('SELECT * FROM partners ORDER BY sort_order ASC').all());
+});
+
+// Админ: создать партнёра
+app.post('/admin/api/partners', requireAuth, (req, res) => {
+    const { name, logo_src } = req.body;
+    const maxOrder = db.prepare('SELECT MAX(sort_order) as m FROM partners').get().m || 0;
+    const result = db.prepare('INSERT INTO partners (name, logo_src, sort_order) VALUES (?,?,?)').run(name || '', logo_src || '', maxOrder + 1);
+    res.json({ success: true, id: result.lastInsertRowid });
+});
+
+// Админ: обновить партнёра
+app.put('/admin/api/partners/:id', requireAuth, (req, res) => {
+    const { name, logo_src, sort_order } = req.body;
+    db.prepare('UPDATE partners SET name=?, logo_src=?, sort_order=? WHERE id=?').run(name || '', logo_src || '', parseInt(sort_order) || 0, req.params.id);
+    res.json({ success: true });
+});
+
+// Админ: удалить партнёра
+app.delete('/admin/api/partners/:id', requireAuth, (req, res) => {
+    db.prepare('DELETE FROM partners WHERE id=?').run(req.params.id);
+    res.json({ success: true });
+});
+
 /* ==================== ПУБЛИЧНЫЕ ФОРМЫ ==================== */
 
 // Универсальный endpoint для всех форм сайта

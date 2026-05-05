@@ -88,6 +88,14 @@ if (!projCols.includes('time_of_day')) {
     db.exec(`ALTER TABLE projects ADD COLUMN time_of_day TEXT DEFAULT ''`);
 }
 
+// Миграция: stat3=255 (Выполненных проектов), stat4=61 (3D роликов) — правильный порядок
+// Если stat3=61 — значит была применена старая неверная миграция, откатываем
+const stat3row = db.prepare("SELECT value FROM homepage_stats WHERE stat_key='stat3'").get();
+if (stat3row && stat3row.value === '61') {
+    db.prepare("UPDATE homepage_stats SET value='255', badge='+4 в апреле', label='Выполненных проектов' WHERE stat_key='stat3'").run();
+    db.prepare("UPDATE homepage_stats SET value='61', badge='+1 в апреле', label='Сданных 3D роликов' WHERE stat_key='stat4'").run();
+}
+
 // админ
 const adminExists = db.prepare('SELECT * FROM users WHERE login = ?').get('admin');
 if (!adminExists) {
@@ -97,7 +105,35 @@ if (!adminExists) {
 
 module.exports = db;
 
-// сидируем дефолтные категории если таблица пустая
+// Сидируем дефолтные значения цифр если таблица пустая
+const statsEmpty = db.prepare('SELECT COUNT(*) as cnt FROM homepage_stats').get().cnt === 0;
+if (statsEmpty) {
+    const defaultStats = [
+        { stat_key: 'stat1', value: '42',   badge: '+1 в апреле',  label: 'Девелопера выбрали нас',  sort_order: 1 },
+        { stat_key: 'stat2', value: '1741', badge: '+67 в апреле', label: 'Сданных рендеров',         sort_order: 2 },
+        { stat_key: 'stat3', value: '255',  badge: '+4 в апреле',  label: 'Выполненных проектов',     sort_order: 3 },
+        { stat_key: 'stat4', value: '61',   badge: '+1 в апреле',  label: 'Сданных 3D роликов',       sort_order: 4 },
+    ];
+    const ins = db.prepare('INSERT INTO homepage_stats (stat_key, value, badge, label, sort_order) VALUES (?,?,?,?,?)');
+    defaultStats.forEach(s => ins.run(s.stat_key, s.value, s.badge, s.label, s.sort_order));
+}
+
+// Сидируем дефолтных партнёров если таблица пустая
+const partnersEmpty = db.prepare('SELECT COUNT(*) as cnt FROM partners').get().cnt === 0;
+if (partnersEmpty) {
+    const defaultPartners = [
+        { name: 'Аквилон',  logo_src: '/assets/images/main-8.svg',  sort_order: 1 },
+        { name: 'Dogma',    logo_src: '/assets/images/main-9.svg',  sort_order: 2 },
+        { name: 'Семья',    logo_src: '/assets/images/main-10.svg', sort_order: 3 },
+        { name: 'Иначе',    logo_src: '/assets/images/main-11.svg', sort_order: 4 },
+        { name: 'СК10',     logo_src: '/assets/images/main-12.svg', sort_order: 5 },
+        { name: 'GloraX',   logo_src: '/assets/images/main-13.svg', sort_order: 6 },
+    ];
+    const ins2 = db.prepare('INSERT INTO partners (name, logo_src, sort_order) VALUES (?,?,?)');
+    defaultPartners.forEach(p => ins2.run(p.name, p.logo_src, p.sort_order));
+}
+
+
 const catCount = db.prepare('SELECT COUNT(*) as c FROM news_categories').get().c;
 if (catCount === 0) {
     const defaults = ['Мероприятия', 'Статьи', 'Работы', 'Культура компании'];
