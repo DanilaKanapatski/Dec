@@ -13,8 +13,8 @@ const ROOT = path.join(__dirname, '..');
 
 /* ==================== EMAIL ==================== */
 const mailer = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
+    host: 'smtp.mail.ru',
+    port: 587,
     secure: true,
     auth: {
         user: 'info@decardstudio.ru',
@@ -473,7 +473,7 @@ app.post('/api/request', async (req, res) => {
         console.error('Email error:', e.message);
         // Не фейлим запрос если почта не ушла — логируем и отвечаем успехом
         // чтобы пользователь видел успешную отправку
-        res.json({ success: true, warning: 'email failed' });
+        return res.status(500).json({ error: e.message });
     }
 });
 

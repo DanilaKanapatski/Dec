@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница — Админка Decard</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+
+<aside class="admin-sidebar">
+    <h2>Decard Admin</h2>
+    <nav>
+        <a href="/admin/index.html">Главная</a>
+        <a href="/admin/homepage.html" class="active">Главная страница</a>
+        <a href="/admin/news.html">Новости / статьи</a>
+        <a href="/admin/projects.html">Проекты / портфолио</a>
+        <a href="/admin/logout">Выйти</a>
+    </nav>
+</aside>
+
+<main class="admin-main">
+    <h1>Главная страница</h1>
+    <p class="admin-lead">Редактирование цифр и партнёров на главной странице сайта.</p>
+
+    <!-- ===== БЛОК ЦИФР ===== -->
+    <section class="blocks-section">
+        <div class="blocks-section__head">
+            <h2>Блок цифр</h2>
+            <p class="admin-muted">Надпись над цифрой — это бейдж (напр. «+67 в апреле»). Цифра — само число. Подпись — текст под цифрой.</p>
+        </div>
+
+        <div id="stats-form" class="stats-grid-editor">
+            <!-- заполняется JS -->
+        </div>
+
+        <div class="form-actions" style="margin-top: 24px;">
+            <button type="button" class="admin-button" id="stats-save-btn">Сохранить цифры</button>
+            <span class="admin-save-status" id="stats-status"></span>
+        </div>
+    </section>
+
+    <!-- ===== ПАРТНЁРЫ ===== -->
+    <section class="blocks-section" style="margin-top: 48px;">
+        <div class="blocks-section__head">
+            <h2>Партнёры (бегущая строка)</h2>
+            <p class="admin-muted">Логотипы отображаются в бегущей строке на главной. Принимаются SVG и PNG с прозрачным фоном.</p>
+        </div>
+
+        <div id="partners-list" class="partners-editor">
+            <!-- заполняется JS -->
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <button type="button" class="admin-button ghost" id="partner-add-btn">+ Добавить партнёра</button>
+            <button type="button" class="admin-button" id="partners-save-btn">Сохранить всех партнёров</button>
+            <span class="admin-save-status" id="partners-status"></span>
+        </div>
+    </section>
+</main>
+
+<style>
+/* ── Редактор цифр ── */
+.stats-grid-editor {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.stat-card__num {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-main-decard, #1D45C5);
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.stat-card label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.stat-card input {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    padding: 10px 12px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color .2s;
+}
+
+.stat-card input:focus { border-color: #1D45C5; }
+
+/* ── Редактор партнёров ── */
+.partners-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.partner-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 12px 16px;
+}
+
+.partner-row__preview {
+    width: 80px;
+    height: 40px;
+    background: #111;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.partner-row__preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.partner-row__preview .no-logo {
+    font-size: 11px;
+    color: #555;
+}
+
+.partner-row__fields {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.partner-row__fields input {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+}
+
+.partner-row__fields input:focus { border-color: #1D45C5; }
+
+.partner-row__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.admin-save-status {
+    font-size: 14px;
+    color: #4caf50;
+    margin-left: 12px;
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+.admin-save-status.is-visible { opacity: 1; }
+.admin-save-status.is-error   { color: #f44336; }
+</style>
+
+<script>
+const STAT_IDS = ['stat1', 'stat2', 'stat3', 'stat4'];
+
+/* ─── ЦИФРЫ ─── */
+async function loadStats() {
+    const res = await fetch('/admin/api/homepage-stats', { credentials: 'include' });
+    const data = await res.json();
+    // Сортируем по sort_order
+    data.sort((a, b) => a.sort_order - b.sort_order);
+
+    const form = document.getElementById('stats-form');
+    form.innerHTML = data.map((s, i) => `
+        <div class="stat-card">
+            <div class="stat-card__num">${i + 1}</div>
+            <label>
+                Бейдж (над цифрой)
+                <input type="text" data-key="${s.stat_key}" data-field="badge" value="${esc(s.badge)}">
+            </label>
+            <label>
+                Цифра
+                <input type="text" data-key="${s.stat_key}" data-field="value" value="${esc(s.value)}">
+            </label>
+            <label>
+                Подпись (под цифрой)
+                <input type="text" data-key="${s.stat_key}" data-field="label" value="${esc(s.label)}">
+            </label>
+        </div>
+    `).join('');
+}
+
+document.getElementById('stats-save-btn').addEventListener('click', async () => {
+    const status = document.getElementById('stats-status');
+    const inputs = document.querySelectorAll('#stats-form input');
+    const map = {};
+    inputs.forEach(inp => {
+        const key = inp.dataset.key;
+        const field = inp.dataset.field;
+        if (!map[key]) map[key] = { stat_key: key };
+        map[key][field] = inp.value.trim();
+    });
+    const payload = Object.values(map);
+
+    try {
+        const res = await fetch('/admin/api/homepage-stats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        showStatus(status, data.success ? 'Сохранено ✓' : 'Ошибка', !data.success);
+    } catch (e) {
+        showStatus(status, 'Ошибка сети', true);
+    }
+});
+
+/* ─── ПАРТНЁРЫ ─── */
+let partners = [];
+
+async function loadPartners() {
+    const res = await fetch('/admin/api/partners', { credentials: 'include' });
+    partners = await res.json();
+    renderPartners();
+}
+
+// Добавить строку нового партнёра прямо в DOM (без запроса к API)
+function addLocalPartnerRow() {
+    const list = document.getElementById('partners-list');
+    const tempId = 'new_' + Date.now();
+    const row = document.createElement('div');
+    row.className = 'partner-row';
+    row.dataset.id = tempId;
+    row.innerHTML = `
+        <div class="partner-row__preview"><span class="no-logo">Нет лого</span></div>
+        <div class="partner-row__fields">
+            <input type="text" placeholder="Название" class="partner-name" value="">
+            <input type="text" placeholder="Путь к логотипу (/uploads/... или /assets/...)" class="partner-logo" value="">
+        </div>
+        <div class="partner-row__actions">
+            <input type="file" class="partner-file" accept="image/*" hidden>
+            <button type="button" class="admin-button ghost small" onclick="this.previousElementSibling.click()">Загрузить лого</button>
+            <button type="button" class="admin-button ghost small danger" onclick="this.closest('.partner-row').remove()">✕</button>
+        </div>
+    `;
+    bindPartnerRow(row);
+    list.appendChild(row);
+    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function bindPartnerRow(row) {
+    const fileInput = row.querySelector('.partner-file');
+    const logoInput = row.querySelector('.partner-logo');
+    const preview   = row.querySelector('.partner-row__preview');
+
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('image', file);
+        const res = await fetch('/admin/api/upload', { method: 'POST', credentials: 'include', body: fd });
+        const data = await res.json();
+        if (data.url) {
+            logoInput.value = data.url;
+            preview.innerHTML = `<img src="${esc(data.url)}" alt="">`;
+        }
+    });
+
+    logoInput.addEventListener('blur', () => {
+        const src = logoInput.value.trim();
+        preview.innerHTML = src
+            ? `<img src="${esc(src)}" alt="">`
+            : `<span class="no-logo">Нет лого</span>`;
+    });
+}
+
+function renderPartners() {
+    const list = document.getElementById('partners-list');
+    list.innerHTML = partners.map(p => `
+        <div class="partner-row" data-id="${p.id}">
+            <div class="partner-row__preview">
+                ${p.logo_src
+                    ? `<img src="${esc(p.logo_src)}" alt="${esc(p.name)}">`
+                    : `<span class="no-logo">Нет лого</span>`}
+            </div>
+            <div class="partner-row__fields">
+                <input type="text" placeholder="Название" class="partner-name" value="${esc(p.name)}">
+                <input type="text" placeholder="Путь к логотипу (/uploads/... или /assets/...)" class="partner-logo" value="${esc(p.logo_src)}">
+            </div>
+            <div class="partner-row__actions">
+                <input type="file" class="partner-file" accept="image/*" hidden>
+                <button type="button" class="admin-button ghost small" onclick="this.previousElementSibling.click()">Загрузить лого</button>
+                <button type="button" class="admin-button ghost small danger" onclick="deletePartner(${p.id})">✕</button>
+            </div>
+        </div>
+    `).join('');
+
+    list.querySelectorAll('.partner-row').forEach(row => bindPartnerRow(row));
+}
+
+// Сохранить всех партнёров одной кнопкой:
+// существующие (data-id=число) — PUT, новые (data-id=new_...) — POST
+document.getElementById('partners-save-btn').addEventListener('click', async () => {
+    const status = document.getElementById('partners-status');
+    const rows = document.querySelectorAll('.partner-row');
+
+    const promises = [...rows].map(row => {
+        const id       = row.dataset.id;
+        const name     = row.querySelector('.partner-name').value.trim();
+        const logo_src = row.querySelector('.partner-logo').value.trim();
+
+        if (id.startsWith('new_')) {
+            // Новый — создаём
+            return fetch('/admin/api/partners', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, logo_src })
+            });
+        } else {
+            // Существующий — обновляем
+            return fetch(`/admin/api/partners/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, logo_src })
+            });
+        }
+    });
+
+    try {
+        await Promise.all(promises);
+        showStatus(status, 'Сохранено ✓');
+        await loadPartners(); // перезагружаем с сервера — новые получат реальные id
+    } catch (e) {
+        showStatus(status, 'Ошибка', true);
+    }
+});
+
+async function deletePartner(id) {
+    if (!confirm('Удалить партнёра?')) return;
+    await fetch(`/admin/api/partners/${id}`, { method: 'DELETE', credentials: 'include' });
+    await loadPartners();
+}
+
+// Добавить нового партнёра локально — без запроса к API
+document.getElementById('partner-add-btn').addEventListener('click', () => {
+    addLocalPartnerRow();
+});
+
+/* ─── Утилиты ─── */
+function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showStatus(el, msg, isError = false) {
+    el.textContent = msg;
+    el.classList.toggle('is-error', isError);
+    el.classList.add('is-visible');
+    setTimeout(() => el.classList.remove('is-visible'), 3000);
+}
+
+// Добавляем API endpoint для получения stats с авторизацией
+// (если его нет — fallback на публичный)
+async function initPage() {
+    await Promise.all([loadStats(), loadPartners()]);
+}
+
+initPage();
+</script>
+
+</body>
+</html>

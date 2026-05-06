@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="shortcut icon" href="/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Категории</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="admin-body">
+<aside class="admin-sidebar">
+    <h2>Decard Admin</h2>
+    <nav>
+        <a href="/admin/index.html">Главная</a>
+        <a href="/admin/news.html">Новости / статьи</a>
+        <a href="/admin/categories.html" class="is-active">Категории</a>
+        <a href="/admin/projects.html">Проекты / портфолио</a>
+        <a href="/admin/logout">Выйти</a>
+    </nav>
+</aside>
+
+<main class="admin-main">
+    <div class="admin-topbar">
+        <h1>Категории статей</h1>
+        <a class="admin-button ghost" href="/admin/news.html">← К статьям</a>
+    </div>
+
+    <p class="admin-muted" style="margin-bottom: 24px;">
+        Категории используются при создании статей и отображаются в фильтрах блога.
+        Можно добавить любую категорию — при написании статьи она появится в подсказках.
+    </p>
+
+    <div class="field" style="max-width: 480px; margin-bottom: 32px;">
+        <span class="field__label">Добавить категорию</span>
+        <div style="display: flex; gap: 12px; margin-top: 8px;">
+            <input type="text" id="new-cat" placeholder="Название категории" style="flex: 1;">
+            <button class="admin-button" id="add-btn">Добавить</button>
+        </div>
+        <p id="cat-error" style="color: #ed2e23; font-size: 13px; margin-top: 6px; display: none;"></p>
+    </div>
+
+    <div id="cat-list" class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Категория</th>
+                    <th style="width: 100px; text-align: right;">Удалить</th>
+                </tr>
+            </thead>
+            <tbody id="cat-tbody">
+                <tr><td colspan="2" style="color: #888;">Загрузка...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+const tbody = document.getElementById('cat-tbody');
+const newCatInput = document.getElementById('new-cat');
+const addBtn = document.getElementById('add-btn');
+const errorEl = document.getElementById('cat-error');
+
+async function loadCats() {
+    const res = await fetch('/admin/api/categories');
+    if (res.status === 401) { location.href = '/admin/login.html'; return; }
+    const cats = await res.json();
+    if (!cats.length) {
+        tbody.innerHTML = '<tr><td colspan="2" style="color:#888;">Категорий пока нет</td></tr>';
+        return;
+    }
+    tbody.innerHTML = cats.map(c => `
+        <tr data-id="${c.id}">
+            <td>${escHtml(c.name)}</td>
+            <td style="text-align: right;">
+                <button class="admin-button ghost admin-button--small del-btn" data-id="${c.id}">Удалить</button>
+            </td>
+        </tr>
+    `).join('');
+    tbody.querySelectorAll('.del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!confirm(`Удалить категорию?`)) return;
+            await fetch('/admin/api/categories/' + btn.dataset.id, { method: 'DELETE' });
+            loadCats();
+        });
+    });
+}
+
+addBtn.addEventListener('click', async () => {
+    const name = newCatInput.value.trim();
+    errorEl.style.display = 'none';
+    if (!name) { showError('Введите название'); return; }
+
+    const res = await fetch('/admin/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+    });
+    const data = await res.json();
+    if (data.success) {
+        newCatInput.value = '';
+        loadCats();
+    } else {
+        showError(data.error || 'Ошибка');
+    }
+});
+
+newCatInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
+});
+
+function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.style.display = 'block';
+}
+
+function escHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])
+    );
+}
+
+loadCats();
+</script>
+</body>
+</html>
