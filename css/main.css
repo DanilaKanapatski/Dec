@@ -1268,7 +1268,7 @@
     aspect-ratio: 480 / 271;
 }
 
-.service-row__special-video img {
+.service-row__special-video video {
     width: 100%;
     height: 100%;
     display: block;
@@ -1574,7 +1574,7 @@
         aspect-ratio: 370 / 209;
     }
 
-    .service-row__special-video img {
+    .service-row__special-video video {
         width: 100%;
         height: 100%;
         display: block;
@@ -1956,7 +1956,7 @@
         aspect-ratio: 300 / 170;
     }
 
-    .service-row__special-video img {
+    .service-row__special-video video {
         width: 100%;
         height: 100%;
         display: block;
@@ -2299,7 +2299,7 @@
             min-width: 0;
         }
 
-        .service-row--special .service-row__special-mobile-photo img {
+        .service-row--special .service-row__special-mobile-photo video {
             width: 100%;
             aspect-ratio: 260 / 147;
             object-fit: cover;

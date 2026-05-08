@@ -14,8 +14,9 @@ const ROOT = path.join(__dirname, '..');
 /* ==================== EMAIL ==================== */
 const mailer = nodemailer.createTransport({
     host: 'smtp.mail.ru',
-    port: 587,
-    secure: true,
+    port: 2525,
+    secure: false,
+    requireTLS: true,
     auth: {
         user: 'info@decardstudio.ru',
         pass: 'OaeERssCq9LUN64Vj0W3'
