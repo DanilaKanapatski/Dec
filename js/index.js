@@ -597,8 +597,8 @@ function initPinnedPortfolio() {
         destroyPinnedPortfolio();
 
         const slidesCount = bgSlides.length;
-        const HOLD = 0.34;
-        const MOVE = 0.72;
+        const HOLD = 0.18;
+        const MOVE = 0.42;
         const TOTAL = (slidesCount - 1) * (HOLD + MOVE) + HOLD;
 
         const zoomFactor = getZoomFactor();
@@ -660,14 +660,44 @@ function initPinnedPortfolio() {
             trigger: section,
             start: 'top top',
             end: () => `+=${stageCssPx * TOTAL}`,
-            scrub: 1,
+
+            scrub: 0.6,
+
+            anticipatePin: 1,
+            fastScrollEnd: true,
+
+            snap: {
+                snapTo: (value) => {
+                    const steps = slidesCount - 1;
+
+                    return Math.round(value * steps) / steps;
+                },
+
+                duration: {
+                    min: 0.35,
+                    max: 0.75
+                },
+
+                delay: 0.02,
+
+                ease: 'power3.out',
+
+                inertia: false
+            },
+
             invalidateOnRefresh: false,
+
             onUpdate: () => {
                 const y = Math.abs(Number(gsap.getProperty(bgTrack, 'y')) || 0);
+
                 const index = Math.max(
                     0,
-                    Math.min(slidesCount - 1, Math.round(y / mediaHeight))
+                    Math.min(
+                        slidesCount - 1,
+                        Math.round(y / mediaHeight)
+                    )
                 );
+
                 setCardContent(index);
             }
         });
